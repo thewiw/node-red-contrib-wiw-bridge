@@ -1,0 +1,69 @@
+<script type="text/x-red" data-help-name="wiwCheck" data-lang="fr-FR">
+    <style>
+            .unorderList {
+                border-width: 0px !important;
+                list-style-type : disc !important;
+            }
+    </style>
+    <!--<img src="/logoWIW.png" alt="logo What Is What">-->
+    
+    <h2><b>wiwCheck</b></h2>
+
+    <p>Ce noeud sert à gérer différents états de la communication (connexion, déconnexion, ...). Son entrée doit être reliée à un noeud <code>status</code>. </p>
+    <h3>Entrée</h3>
+    <p>Le message d'entrée doit contenir l'attribut décrit ci-dessous</p>
+    <dl class="message-properties">
+        <dt>wiwConnected<span class="property-type">object</span></dt>
+        <dd> Cet attribut correspond à l'état de connexion au brocker Mqtt.
+            <ul>
+                <li><code>true</code> la connexion est établie,</li>
+                <li><code>false</code> : la connexion est interrompue.</li>
+            </ul>
+            Lorsque cet attribut vaut <code>false</code>, les messages devant être envoyés au What Is What sont stockés dans un buffer dédié jusqu'à ce que cet attribut vaille <code>true</code>.
+        </dd>
+    </dl>
+
+    
+    <h3>Sorties</h3>
+   <p>Ce noeud peut être optionnel sous certaines conditions, il est cependant recommandé pour une gestion complète de votre communication avec What Is What. Il fournit 2 sorties :</p>
+    <ol class="node-ports">
+    <li>
+        <dl class="message-properties">
+        <dt>payload<span class="property-type">object</span></dt>
+        <dd> 
+            <dl class="message-properties">
+                <dt>connected<span class="property-type">boolean</span></dt>
+                <dd>L'état de la connexion avec le brocker Mqtt.
+                    <ul>
+                        <li class="unorderList"><code>true</code> : la connexion est établie,</li>
+                        <li class="unorderList"><code>false</code> : il n'y a pas de connexion.</li>
+                    </ul>
+                </dd>
+                    
+                <dt>sendMsgsCount<span class="property-type">number</span></dt>
+                <dd>Le nombre de messages stockés actuellement dans le buffer </dd>
+
+                <dt>sendMsgsLostCount<span class="property-type">number</span></dt>
+                <dd>Le nombre de messages qui ont été perdus depuis la dernière deconnexion.</dd>
+
+                <dt>sendMsgsTotalLostCount<span class="property-type"> number </span></dt>
+                <dd>Le nombre de messages perdus depuis le lancement de Node-RED ou la dernière réinitialisation du système.</dd>
+            </dl>
+        </dd>
+        </dl>
+    </li>
+    <li>
+        <dl class="message-properties">
+            <dt>payload<span class="property-type">object</span></dt>
+            <dd>Cette sortie sert à envoyer les messages stockés dans le buffer une fois la connexion rétablie. Elle doit donc être connectée à un noeud de communication.</dd>
+        </dl>
+    </li>
+    </ol>
+    <p> ⚠️ Chaque message contient ses propres paramètres Mqtt (qos, topic, ...) et ce noeud peut renvoyer tous les types de messages à What Is What. </br>
+        Attention à ce que le noeud Mqtt utilisé pour la deuxième sortie ne modifie pas ces valeurs sous peine d'avoir une communication instable avec What Is What. </br>
+    </p>
+
+    <h3>Paramètres</h3>
+    <p>Ce noeud ne peut pas fonctionner si aucun noeud de configuration de type <code>wiwMqttConfig</code> ne lui est affecté. <br/>
+    Pour ce faire, rendez vous dans les propriétés du noeud et créez un nouveau noeud de configuration ou affectez-lui en un que vous avez déjà créé.</p>
+</script>

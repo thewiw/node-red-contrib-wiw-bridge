@@ -1,0 +1,120 @@
+[
+    {
+        "id": "f178d9ec.f0dcc8",
+        "type": "tab",
+        "label": "system2Wiw",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "4e1c5385.7d447c",
+        "type": "system2Wiw",
+        "z": "f178d9ec.f0dcc8",
+        "name": "",
+        "configuration": "5917194.69153e8",
+        "x": 737.3828048706055,
+        "y": 295.31249237060547,
+        "wires": [
+            [
+                "fd126e56.ddad9"
+            ]
+        ]
+    },
+    {
+        "id": "fd126e56.ddad9",
+        "type": "mqtt out",
+        "z": "f178d9ec.f0dcc8",
+        "name": "mqtt out",
+        "topic": "",
+        "qos": "",
+        "retain": "",
+        "broker": "754b50b.ffc2fb",
+        "x": 911.3945465087891,
+        "y": 295.08984565734863,
+        "wires": []
+    },
+    {
+        "id": "39457479.b6530c",
+        "type": "function",
+        "z": "f178d9ec.f0dcc8",
+        "name": "reset declaration",
+        "func": "msg.wiwSystem = {resetCom : true,setLogWhiteList : [\"error\"]};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 536.0173187255859,
+        "y": 295.12151622772217,
+        "wires": [
+            [
+                "4e1c5385.7d447c"
+            ]
+        ]
+    },
+    {
+        "id": "abce21d5.e420f",
+        "type": "status",
+        "z": "f178d9ec.f0dcc8",
+        "name": "get Mqtt status",
+        "scope": [
+            "fd126e56.ddad9"
+        ],
+        "x": 138.01734924316406,
+        "y": 295.01040840148926,
+        "wires": [
+            [
+                "7ede5a9.d6706a4"
+            ]
+        ]
+    },
+    {
+        "id": "7ede5a9.d6706a4",
+        "type": "function",
+        "z": "f178d9ec.f0dcc8",
+        "name": "WiW connected ?",
+        "func": "if (msg.status.text === \"node-red:common.status.connected\")\n   return msg;\n  else \n    return null;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 326.0173797607422,
+        "y": 295.01040840148926,
+        "wires": [
+            [
+                "39457479.b6530c"
+            ]
+        ]
+    },
+    {
+        "id": "5917194.69153e8",
+        "type": "wiwMqttConfig",
+        "z": "",
+        "name": "WhatIsWhat",
+        "chnlSystemOut": "demo-integ/sys_out",
+        "chnlDeclareOut": "demo-integ/decl_out",
+        "chnlValueOut": "demo-integ/val_out",
+        "qos": "1",
+        "reqResp": "10000",
+        "connected": "false",
+        "sendMsgsMaxCount": "100",
+        "sendMsgsKeepMostRecent": "true"
+    },
+    {
+        "id": "754b50b.ffc2fb",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "démo-intégration (dev)",
+        "broker": "100.64.0.204",
+        "port": "30883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    }
+]

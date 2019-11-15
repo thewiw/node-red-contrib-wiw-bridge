@@ -1,0 +1,107 @@
+<script type="text/javascript">
+    RED.nodes.registerType('wiw2ValuesObject', {
+        category: 'WIW Bridge',
+        color: '#C0C0C0',
+        defaults: {
+            name: {
+                value: "",
+                validate: RED.validators.regex(/[a-z]*/),
+                required: false
+            },
+            configuration: {
+                value: "",
+                type: "wiwMqttConfig",
+                required: true
+            }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "WIWicon.png",
+        align: "left",
+        label: function () {
+            return this.name || "wiw2ValuesObject";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="wiw2ValuesObject">
+    <style>
+        .categories {
+            border: 2px solid grey;
+            color: grey;
+            margin: 20px;
+            padding: 20px;
+        } 
+    </style>
+    <div class="categories">
+        <h2>Node</h2>
+        <div class="form-row">
+            <label for="node-input-name"><i class="icon-tag"></i> Name </label>
+            <input type="text" id="node-input-name" placeholder="Name">
+        </div>
+    </div>
+    <div class="categories">
+        <h2>Configuration node</h2>
+        <div class="form-row">
+            <label for="node-input-configuration"><i class="icon-wrench"></i> Configuration </label>
+            <input type="text" id="node-input-configuration" >
+        </div>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="wiw2ValuesObject" data-lang="en-US">
+    <!--<img src="/logoWIW.png" alt="logo What IS What">-->
+
+    <h2><b>wiw2ValuesObject</b></h2>
+    
+    <p>Extracts values from a What Is What message. Generates as many output messages as sources. </p>
+
+    <h3> Inputs </h3>
+    <dl class="message-properties">
+        <p> ⚠️ Input of this node is a message comming from What Is What via a Mqtt communication. If input is directly linked to a Mqtt node, please make sur e the output of this node is a <code>JSON object</code> or <code>String</code>.</p>
+        <dt>payload <span class="property-type"> string | buffer </span></dt>
+        <dd>The content of the message received from What Is What. </dd>
+
+        <h4><i>Example :</i></h4>
+        <p>Reception of pause's value from What Is What (this datasource has been defined with <code>twoWays</code> at the value <code>true</code>).</p>
+        <pre><code>msg:{
+        payload: {
+            vals : [
+            [machinedemo#pause, 1564751327070, 0]
+            ],
+            msgId : 10
+        }
+        }</code></pre>
+    </dl>
+
+
+    <h3> Outputs </h3>
+    <dl class="message-properties">
+        <p>The output is a array of messages. There will be as much output messages sent as there are different sources and timestamp.</p>
+        <dt>msgId <span class="property-type"> number</span></dt>
+        <dd>The id of the message. </dd>
+
+        <dt>wiwSource <span class="property-type">String</span></dt>
+        <dd>The name of the datasource's origin (see <code>source</code> attribute from node <code>dataSources2Wiw</code>).</dd>
+
+        <dt>wiwTstamp <span class="property-type"> number</span></dt>
+        <dd>Number of milliseconds since january 1st, 1970 at midnight in UTC time zone when the message is build.</dd>
+
+        <dt>wiwValues <span class="property-type">string | buffer</span></dt>
+        <dd>The values as an object, each attribute’s is a datsource's name while each attribute’s value is the reported value. </dd>
+    
+        <h4><i>Exemple :</i></h4>
+        <pre><code>msg:{
+        wiwMsgId : 10,
+        wiwSource : "machinedemo",
+        wiwTstamp : 1564751327070,
+        wiwValues : {
+            pause : 0
+        }
+        }</code></pre>
+    </dl>
+
+    <h3>Parameters</h3>
+    <p>This node cannot work without a <code>wiwMqttConfig</code> configuration node. <br/>
+    Go to node's properties and create a new configuration node or select an existing one in the list.</p>
+</script>

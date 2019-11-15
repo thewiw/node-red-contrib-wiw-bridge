@@ -1,0 +1,257 @@
+[
+    {
+        "id": "2a37d004.25f49",
+        "type": "tab",
+        "label": "comsS7",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "a8a37f48.2fa0d",
+        "type": "mqtt out",
+        "z": "2a37d004.25f49",
+        "name": "mqtt out",
+        "topic": "example/val_out",
+        "qos": "",
+        "retain": "",
+        "broker": "754b50b.ffc2fb",
+        "x": 849.5729293823242,
+        "y": 210.13889503479004,
+        "wires": []
+    },
+    {
+        "id": "c3dff295.3c941",
+        "type": "inject",
+        "z": "2a37d004.25f49",
+        "name": "What Is What simulator",
+        "topic": "",
+        "payload": "{\"msgId\":5,\"vals\":[[\"machinedemo#speedMachine\",\"1564751327070\",250],[\"machinedemo#pauseMachine\",\"1564751327070\",0]]}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 422.57984924316406,
+        "y": 83.95836067199707,
+        "wires": [
+            [
+                "6c9830e1.6ed02"
+            ]
+        ]
+    },
+    {
+        "id": "8c2d1c8c.6b37e",
+        "type": "valuesObject2S7",
+        "z": "2a37d004.25f49",
+        "name": "",
+        "x": 658.5694046020508,
+        "y": 145.24652671813965,
+        "wires": [
+            [
+                "dedc25cc.b6b058"
+            ]
+        ]
+    },
+    {
+        "id": "7f53a021.247d4",
+        "type": "valuesObject2Wiw",
+        "z": "2a37d004.25f49",
+        "name": "",
+        "configuration": "5917194.69153e8",
+        "x": 647.583366394043,
+        "y": 209.49656105041504,
+        "wires": [
+            [
+                "a8a37f48.2fa0d"
+            ]
+        ]
+    },
+    {
+        "id": "e32bf32f.80f0f",
+        "type": "wiw2ValuesObject",
+        "z": "2a37d004.25f49",
+        "name": "",
+        "configuration": "5917194.69153e8",
+        "x": 438.57298278808594,
+        "y": 145.42362022399902,
+        "wires": [
+            [
+                "8c2d1c8c.6b37e"
+            ]
+        ]
+    },
+    {
+        "id": "dedc25cc.b6b058",
+        "type": "s7 out",
+        "z": "2a37d004.25f49",
+        "endpoint": "19b2ebbf.484514",
+        "variable": "",
+        "name": "",
+        "x": 861.5694732666016,
+        "y": 144.67708587646484,
+        "wires": []
+    },
+    {
+        "id": "5bbaca7c.6b29a4",
+        "type": "s7 in",
+        "z": "2a37d004.25f49",
+        "endpoint": "19b2ebbf.484514",
+        "mode": "all",
+        "variable": "",
+        "diff": true,
+        "name": "",
+        "x": 241.5729217529297,
+        "y": 208.4409818649292,
+        "wires": [
+            [
+                "fdb8bac7.1c8008"
+            ]
+        ]
+    },
+    {
+        "id": "fdb8bac7.1c8008",
+        "type": "function",
+        "z": "2a37d004.25f49",
+        "name": "source declaration",
+        "func": "msg.wiwSource = \"machinedemo\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 429.49999237060547,
+        "y": 209.00000953674316,
+        "wires": [
+            [
+                "7f53a021.247d4"
+            ]
+        ]
+    },
+    {
+        "id": "62a5801b.bd45c",
+        "type": "mqtt in",
+        "z": "2a37d004.25f49",
+        "name": "mqtt in",
+        "topic": "example/val_in",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "754b50b.ffc2fb",
+        "x": 210.5833282470703,
+        "y": 145.82292938232422,
+        "wires": [
+            [
+                "e32bf32f.80f0f"
+            ]
+        ]
+    },
+    {
+        "id": "6c9830e1.6ed02",
+        "type": "mqtt out",
+        "z": "2a37d004.25f49",
+        "name": "mqtt in",
+        "topic": "example/val_in",
+        "qos": "",
+        "retain": "",
+        "broker": "754b50b.ffc2fb",
+        "x": 695.5729217529297,
+        "y": 83.79861640930176,
+        "wires": []
+    },
+    {
+        "id": "754b50b.ffc2fb",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "démo-intégration (dev)",
+        "broker": "100.64.0.204",
+        "port": "30883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "5917194.69153e8",
+        "type": "wiwMqttConfig",
+        "z": "",
+        "name": "WhatIsWhat",
+        "chnlSystemOut": "demo-integ/sys_out",
+        "chnlDeclareOut": "demo-integ/decl_out",
+        "chnlValueOut": "demo-integ/val_out",
+        "qos": "1",
+        "reqResp": "10000",
+        "connected": "false",
+        "sendMsgsMaxCount": "100",
+        "sendMsgsKeepMostRecent": "true"
+    },
+    {
+        "id": "19b2ebbf.484514",
+        "type": "s7 endpoint",
+        "z": "",
+        "address": "127.0.0.1",
+        "port": "102",
+        "rack": "0",
+        "slot": "2",
+        "localtsaphi": "01",
+        "localtsaplo": "00",
+        "remotetsaphi": "01",
+        "remotetsaplo": "00",
+        "connmode": "rack-slot",
+        "cycletime": "1500",
+        "timeout": "1500",
+        "verbose": "default",
+        "name": "PLC S7",
+        "vartable": [
+            {
+                "addr": "DB2,DINT1",
+                "name": "qtyMachine"
+            },
+            {
+                "addr": "DB2,B5",
+                "name": "pauseMachine"
+            },
+            {
+                "addr": "DB2,I6",
+                "name": "errorMachine"
+            },
+            {
+                "addr": "DB2,I8",
+                "name": "speedMachine"
+            },
+            {
+                "addr": "DB2,S11.50",
+                "name": "id"
+            },
+            {
+                "addr": "DB2,S63.90",
+                "name": "desc"
+            },
+            {
+                "addr": "DB2,S155.50",
+                "name": "prodId"
+            },
+            {
+                "addr": "DB2,DINT207",
+                "name": "qty"
+            },
+            {
+                "addr": "DB2,DINT211",
+                "name": "qtyProduced"
+            },
+            {
+                "addr": "DB2,S215.16",
+                "name": "start"
+            },
+            {
+                "addr": "DB2,S233.16",
+                "name": "end"
+            }
+        ]
+    }
+]

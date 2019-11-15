@@ -1,0 +1,143 @@
+<script type="text/javascript">
+    RED.nodes.registerType('system2Wiw', {
+        category: 'WIW Bridge',
+        color: '#C0C0C0',
+        defaults: {
+            name: {
+                value: "",
+                validate: RED.validators.regex(/[a-z]*/),
+                required: false
+            },
+            configuration: {
+                value: "",
+                type: "wiwMqttConfig",
+                required: true
+            }
+        },
+        icon: "WIWicon.png",
+        align: "right",
+        inputs: 1,
+        outputs: 1,
+        label: function () {
+            return this.name || "system2Wiw";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="system2Wiw">
+    <style>
+        .categories {
+            border: 2px solid grey;
+            color: grey;
+            margin: 20px;
+            padding: 20px;
+        } 
+    </style>
+    <div class="categories">
+        <h2>Node</h2>
+        <div class="form-row">
+            <label for="node-input-name"><i class="icon-tag"></i> Name </label>
+            <input type="text" id="node-input-name" placeholder="Name">
+        </div>
+    </div>
+    <div class="categories">
+        <h2>Configuration node</h2>
+        <div class="form-row">
+            <label for="node-input-configuration"><i class="icon-wrench"></i> Configuration </label>
+            <input type="text" id="node-input-configuration" >
+        </div>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="system2Wiw" data-lang="en-US">
+    <!--<img src="/logoWIW.png" alt="logo What Is What">-->
+
+    <h2><b>system2Wiw</b></h2>
+    
+    <p>Builds a message to reset and setup the communication with What Is What.<br/> 
+        It is used to : 
+        <ul>
+            <li>reset messages identifiers,;</li>
+            <li>define "log" messages types we want to receive from What Is What.</li>
+        </ul>
+        It is recommended to execute this node at every Node-RED restart or reconnection to What Is What.
+    </p>
+    <h3>Input</h3>
+    <p>The input message has to contain the attributes described bellow</p>
+    <dl class="message-properties">
+        <dt>payload or wiwSystem<span class="property-type">object</span></dt>
+        <dd>Contains a list of actions asked to What Is What.<br/>
+            It can have 2 attributes : 
+            <dl class="message-properties">
+                <dt class="optional">resetCom
+                    <span class="property-type">boolean</span>
+                </dt>
+                <dd> <code>true</code> : resets the communication with What Is What : 
+                    <ul>
+                        <li>the buffer holding messages to send is cleared (unsent messages are lost),</li> 
+                        <li>the buffer holding expected responses is cleared,</li>
+                        <li>messages identifier is set to 0.</li>
+                    </ul>
+                </dd>
+                <dt class="optional">setLogWhiteList <span class="property-type">buffer</span></dt>
+                <dd>Hold the "log" messages list whished to be received from  What Is What.<br />
+                    "log" messages are asynchronous and used to know What Is Whats state.<br />
+                    "log" messages type can be :
+                    <ul>
+                        <li><code>*</code> : all messages are allowed</li>
+                        <li><code>Info</code> : information messages are allowed</li>
+                        <li><code>Warn</code> : warning messages are allowed </li>
+                        <li><code>Error</code> : error messages are allowed </li>
+                        <li><code>Fatal</code> : fatal messages are allowed </li>
+                    </ul>
+                    See <code>wiwLogs</code> for more information.
+                </dd>
+            </dl>
+        </dd>
+
+        <dt class="optional"> wiwMqttTopic <span class="property-type"> string </span></dt>
+        <dd>Mqtt Topic to which the message will be sent. If not provided, the <code>Channel Declaration Out</code> from the Configuration node is used. </dd>
+
+        <h4><i>Example :</i></h4>
+        <p> reset communication, allow "log" messages of type 'fatal", '"error" and "warning"</p>
+        <pre><code>msg:{ 
+            wiwSystem : {
+                resetCom : true,
+                setLogWhiteList : ["fatal", "error", "warn"]
+            }
+        }</code></pre>
+    </dl>
+
+    <h3>Output</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>Actions asked to the system.</dd>
+
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>The MQTT topic to publish to. See <code>wiwMqttTopic</code> input for more info. </dd>
+
+        <dt class="optional">qos <span class="property-type">number </span></dt>
+        <dd> Mqtt Qos : must always be 2.</dd>
+        
+        <dt class="optional">retain <span class="property-type">boolean</span></dt>
+        <dd> Mqtt retain : must always be <code>false</code>.</dd>
+    
+        <h4><i>Example :</i></h4>
+        <pre><code>msg:{
+            payload: {
+                resetCom: true,
+                setLogWhiteList: ["fatal", "error", "warn"],
+                msgId: 1
+            },
+            topic : "demo-integ/sys_out",
+            retain : false,
+            qos : 2
+        }</code></pre>
+        <p> ⚠️ This message has to be received only once. Under Mqtt it has to be sent in "QOS2" without "retained".<br />
+        Make sure that Mqtt node doesn't modify this values without such having an unstable communication with What Is What.</p>
+    </dl>
+
+    <h3>Parameters</h3>
+        <p>This node can not work without a <code>wiwMqttConfig</code> configuration node. <br/>
+        Go to node's properties and create a new configuration node or select an existing one in the list.</p>
+</script>

@@ -1,0 +1,120 @@
+<script type="text/javascript">
+    RED.nodes.registerType('wiwCheck', {
+        category: 'WIW Bridge',
+        color: '#C0C0C0',
+        defaults: {
+            name: {
+                value: "",
+                validate: RED.validators.regex(/[a-z]*/),
+                required: false
+            },
+            configuration: {
+                value: "",
+                type: "wiwMqttConfig",
+                required: true
+            }
+        },
+        inputs: 1,
+        outputs: 2,
+        icon: "WIWicon.png",
+        align: "left",
+        label: function () {
+            return this.name || "wiwCheck";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="wiwCheck">
+    <style>
+        .categories {
+            border: 2px solid grey;
+            color: grey;
+            margin: 20px;
+            padding: 20px;
+        } 
+    </style>
+    <div class="categories">
+        <h2>Node</h2>
+        <div class="form-row">
+            <label for="node-input-name"><i class="icon-tag"></i> Name </label>
+            <input type="text" id="node-input-name" placeholder="Name">
+        </div>
+    </div>
+    <div class="categories">
+        <h2>Configuration node</h2>
+        <div class="form-row">
+            <label for="node-input-configuration"><i class="icon-wrench"></i> Configuration </label>
+            <input type="text" id="node-input-configuration" >
+        </div>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="wiwCheck" data-lang="en-US">
+    <style>
+            .unorderList {
+                border-width: 0px !important;
+                list-style-type : disc !important;
+            }
+    </style>
+    
+    <!--<img src="/logoWIW.png" alt="logo What Is What">-->
+
+    <h2><b>wiwCheck</b></h2>
+
+    <p>This node is used to manage communication states(for example, connected, disconnected, ...). It has to be linked to a <code>status</code> node's input. </p>
+    <h3>Input</h3>
+    <p>The input message has to contain the following attributes</p>
+    <dl class="message-properties">
+        <dt>wiwConnected<span class="property-type">object</span></dt>
+        <dd> This attribute corresponds to the Mqtt brocker connection's state.
+            <ul>
+                <li><code>true</code> : connected,</li>
+                <li><code>false</code> : disconnected.</li>
+            </ul>
+            Whe this attribute has the value <code>false</code>, messages which are supposed to be sent to What Is What are stored into a buffer untile the this attribute's value changes to <code>true</code>.
+        </dd>
+    </dl>
+
+    <h3>Outputs</h3>
+   <p>This node may be optional under some conditions, it is anyway recommanded for a complete handling of the communication with What Is What. It provides 2 outputs :</p>
+    <ol class="node-ports">
+    <li>
+        <dl class="message-properties">
+            <dt>payload<span class="property-type">object</span></dt>
+            <dd> 
+            <dl class="message-properties">
+                <dt>connected<span class="property-type">boolean</span></dt>
+                <dd>Mqtt broker current connection's status.
+                    <ul>
+                        <li class="unorderList"><code>true</code> : connected,</li>
+                        <li class="unorderList"><code>false</code> : diconnected.</li>
+                    </ul>
+                </dd>
+                    
+                <dt>sendMsgsCount<span class="property-type">number</span></dt>
+                <dd>Number of stored message on the dedicated buffer. </dd>
+
+                <dt>sendMsgsLostCount<span class="property-type">number</span></dt>
+                <dd>Number of lost messages since last deconnection.</dd>
+
+                <dt>sendMsgsTotalLostCount<span class="property-type">number</span></dt>
+                <dd>Number of lost messages since last Node-RED start or last system reset.</dd>
+            </dl>
+            </dd>
+        </dl>
+    </li>
+    <li>
+        <dl class="message-properties">
+            <dt>payload<span class="property-type">object</span></dt>
+            <dd>This output is used to send stored message once connection is back. It has to be linked to a communication node.</dd>
+        </dl>
+    </li>
+    </ol>
+    <p> ⚠️ Each stored message contains their own Mqtt parameters and this node can send every king of message (system2Wiw, datasources2Wiw, etc). </br>
+    Make sure that the Mqtt node doesn't modify this values without such having an unstable communication with What Is What.</p>
+    </p>
+
+    <h3>Parameters</h3>
+    <p>This node can not work without a <code>wiwMqttConfig</code> configuration node. <br/>
+    Go to the node's properties and create a new configuration node or select an existing one in the list.</p>
+</script>

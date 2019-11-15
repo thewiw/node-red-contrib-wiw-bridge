@@ -1,0 +1,56 @@
+<script type="text/x-red" data-help-name="wiw2ValuesObject" data-lang="fr-FR">
+    <!--<img src="/logoWIW.png" alt="logo What IS What">-->
+
+    <h2><b>wiw2ValuesObject</b></h2>
+    
+    <p>Extrait les valeurs du message reçu de What Is What. Génère autant de messages qu'il y a de sources différentes</p>   
+    
+    <h3>Entrée</h3>
+    
+    <dl class="message-properties">
+        <p> ⚠️ Veuillez vérifier que le format des données d'entrée est de type <code>JSON object</code> ou <code>String</code>.</p>
+        <dt>payload<span class="property-type">object</span></dt>
+        <dd>Le contenu du message reçu de What Is What.</dd>
+
+        <h4><i>Exemple :</i></h4>
+        <p>Récéption de la valeur pause depuis le What Is What (cette source de donnée a été définie avec l'attribut <code>twoWays</code> à <code>true</code>).</p>
+        <pre><code>msg:{
+            payload: {
+                vals : [
+                [machinedemo#pause, 1564751327070, 0]
+                ],
+                msgId : 10
+            }
+        }</code></pre>
+    </dl>
+
+    <h3>Sortie</h3>
+    <dl class="message-properties">
+        <p>La sortie est une liste de messages. Il y a autant de messages envoyés que de sources et/ou timestamps différents dans le message d'origine.</p>
+        <dt>msgId <span class="property-type">number</span></dt>
+        <dd>L'identifiant unique du message. </dd>
+
+        <dt>wiwSource <span class="property-type">String</span></dt>
+        <dd>Le nom de l'origine de la source de données (voir l'attribut <code>source</code> dans <code>dataSources2Wiw</code>).</dd>
+
+        <dt>wiwTstamp <span class="property-type">number</span></dt>
+        <dd>Le nombre de millisecondes depuis le 1er Janvier 1970 à minuit dans la zone UTC.</dd>
+
+        <dt>wiwValues <span class="property-type">string | buffer</span></dt>
+        <dd>Les valeurs reçues de What Is What dans un objet. Chaque attribut est le nom de la source de données et sa valeur est la valeur associée.</dd>
+
+        <h4><i>Exemple :</i></h4>
+        <pre><code>msg:{
+        wiwMsgId : 10,
+        wiwSource : "machinedemo",
+        wiwTstamp : 1564751327070,
+        wiwValues : {
+            pause : 0
+        }
+        }</code></pre>
+    </dl>
+
+    <h3>Paramètres</h3>
+    <p>Ce noeud ne peut pas fonctionner si aucun noeud de configuration de type <code>wiwMqttConfig</code> ne lui est affecté. <br/>
+    Pour ce faire, rendez vous dans les propriétés du noeud et créez un nouveau noeud de configuration ou affectez-lui en un que vous avez déjà créé.</p>
+</script>

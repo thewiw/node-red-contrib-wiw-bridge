@@ -1,0 +1,122 @@
+[
+    {
+        "id": "bb66716e.c0e7c",
+        "type": "tab",
+        "label": "wiwCheck",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "3534400c.41bcd",
+        "type": "mqtt out",
+        "z": "bb66716e.c0e7c",
+        "name": "mqtt out",
+        "topic": "",
+        "qos": "",
+        "retain": "",
+        "broker": "754b50b.ffc2fb",
+        "x": 815.6667709350586,
+        "y": 268.6666955947876,
+        "wires": []
+    },
+    {
+        "id": "29d5932e.e7e5fc",
+        "type": "status",
+        "z": "bb66716e.c0e7c",
+        "name": "",
+        "scope": [
+            "3534400c.41bcd"
+        ],
+        "x": 294,
+        "y": 241.00000476837158,
+        "wires": [
+            [
+                "c49de573.370f88"
+            ]
+        ]
+    },
+    {
+        "id": "dd1e5d84.21e35",
+        "type": "wiwCheck",
+        "z": "bb66716e.c0e7c",
+        "name": "",
+        "configuration": "5917194.69153e8",
+        "x": 645.6666946411133,
+        "y": 240.66669273376465,
+        "wires": [
+            [
+                "261d39a.637d3c6"
+            ],
+            [
+                "3534400c.41bcd"
+            ]
+        ]
+    },
+    {
+        "id": "261d39a.637d3c6",
+        "type": "debug",
+        "z": "bb66716e.c0e7c",
+        "name": "status",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 803.6666870117188,
+        "y": 209.99999904632568,
+        "wires": []
+    },
+    {
+        "id": "c49de573.370f88",
+        "type": "function",
+        "z": "bb66716e.c0e7c",
+        "name": "WIW connected ?",
+        "func": "msg.wiwConnected = (msg.status.text ===\"node-red:common.status.connected\") ? true : false;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 469.66668701171875,
+        "y": 240.66668605804443,
+        "wires": [
+            [
+                "dd1e5d84.21e35"
+            ]
+        ]
+    },
+    {
+        "id": "754b50b.ffc2fb",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "démo-intégration (dev)",
+        "broker": "100.64.0.204",
+        "port": "30883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "5917194.69153e8",
+        "type": "wiwMqttConfig",
+        "z": "",
+        "name": "WhatIsWhat",
+        "chnlSystemOut": "demo-integ/sys_out",
+        "chnlDeclareOut": "demo-integ/decl_out",
+        "chnlValueOut": "demo-integ/val_out",
+        "qos": "1",
+        "reqResp": "10000",
+        "connected": "false",
+        "sendMsgsMaxCount": "100",
+        "sendMsgsKeepMostRecent": "true"
+    }
+]

@@ -1,0 +1,153 @@
+<script type="text/x-red" data-help-name="wiwLogs" data-lang="fr-FR">
+    <!--<img src="/logoWIW.png" alt="logo What Is What">-->
+
+    <h2><b>wiw2Logs</b></h2>
+    
+    <p>Ce noeud gère les messages "log" envoyés par What Is What. Ses buts sont :
+        <ul>
+            <li>de fournir les réponses envoyées par What Is What,</li>
+            <li>de prévenir des réponses en attente non reçues (timeout),</li>
+            <li>de fournir les messages "log" standards ("Fatal", "Error", "Warning", "Info", ... voir <code>system2Wiw</code>),</li>
+            <li>de prévenir lors de la réception de messages "log" incompréhensibles,</li>
+            <li>de prévenir lors de la réception de réponses non attendues.</li>
+        </ul>
+    </p>
+    <h3>Entrées</h3>
+    <dl class="message-properties">
+        <p> ⚠️ Veuillez vérifier que le format des données d'entrée est de type <code>JSON object</code> ou <code>String</code>.</p>
+        <p>Une seconde entrée est nécessaire afin de faire fonctionner la gestion de l'attente des messages; le plus simple est d'utiliser un Inject avec un intervalle régulier inférieur au timeout des messages, dont le payload doit être "MSG TIMEOUT".</p>
+        <dt>payload <span class="property-type"> string | buffer </span>></dt>
+        <dd>Le message reçu de What Is What.</dd>
+    </dl>
+
+    <h3>Sorties</h3>
+    <p>Ce noeud possède 5 sorties distinctes. Les 4 premières servent à trier les différents messages "log" reçus de What Is What. La dernière gère les réponses qui auraient dû être reçues de What Is What mais qui ne sont pas arrivées dans le temps imparti.</p>
+    <ol class="node-ports">
+        <li>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">object</span></dt>
+                <dd>Cette sortie fournit les messages "log" qui ne sont pas des réponses (voir <code>system2Wiw</code>.
+                    <dl class="message-properties">
+                        <dt>type <span class="property-type">string</span></dt>
+                        <dd>Le type de l'évènement ("info","warn","error","fatal").</dd>
+
+                        <dt>tstampISO<span class="property-type">string</span></dt>
+                        <dd>Le timestamp au format ISO.</dd>
+
+                        <dt>tstamp <span class="property-type">number</span></dt>
+                        <dd>Le timestamp exprimé en nombre de millisecondes depuis le 1er Janvier 1970 à minuit dans la zone UTC.</dd>
+
+                        <dt>message <span class="property-type"> string </span></dt>
+                        <dd>Le message envoyé par What Is What. </dd>
+                    </dl>
+                </dd>
+            </dl>
+        </li>    
+        <li>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">string | buffer</span></dt>
+                <dd> Cette sortie fournit les messages de réponse dont l'identifiant est connu du noeud de configuration.
+                    <dl class="message-properties">
+                        <dt>type <span class="property-type">string</span></dt>
+                        <dd>Le type de l'évènement ("RES"). </dd>
+                            
+                        <dt>tstampISO<span class="property-type">string</span></dt>
+                        <dd>Le timestamp au format ISO.</dd>
+
+                        <dt>tstamp <span class="property-type">number</span></dt>
+                        <dd>Le timestamp exprimé en nombre de millisecondes depuis le 1er Janvier 1970 à minuit dans la zone UTC.</dd>
+
+                        <dt>msgId <span class="property-type">number</span></dt>
+                        <dd>L'identifiant du message original. </dd>
+
+                        <dt>status <span class="property-type">string</span></dt>
+                        <dd>"OK" si l'action demandée a pu êttre réalisée, "NOK" si une erreur a eu lieu, voir <code>msg.payload.message</code> pour plus d'informations. </dd>
+
+                        <dt>message <span class="property-type">string</span></dt>
+                        <dd>Le message envoyé par What Is What (peut être vide). </dd>
+
+                        <dt>origin <span class="property-type">object</span></dt>
+                        <dd>Les informations contenues dans le message original (voir chaque noeud pour connaître sa structure).</dd>
+
+                        <dt class="optional">wiwRespContext <span class="property-type">object</span></dt>
+                        <dd>Un attribut permettant à l'utilisateur de stocker des informations dont il pourrait avoir besoin une fois la réponse au message reçue.</dd>
+                    </dl>
+                </dd>
+            </dl>
+        </li>    
+        <li>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">string | buffer</span></dt>
+                <dd> Cette sortie fournit les messages de réponse dont l'identitfiant est inconnu du noeud de configuration.
+                    <dl class="message-properties">
+                        <dt>type <span class="property-type">string</span></dt>
+                        <dd>Le type de l'évènement qui est "RES". </dd>
+
+                        <dt>tstampISO<span class="property-type">string</span></dt>
+                        <dd>Le timestamp au le format ISO.</dd>
+
+                        <dt>tstamp <span class="property-type">number</span></dt>
+                        <dd>Le timestamp exprimé en nombre de millisecondes depuis le 1er Janvier 1970 à minuit dans la zone UTC.</dd>
+
+                        <dt>msgId <span class="property-type">number</span></dt>
+                        <dd>L'identifiant du message original. </dd>
+
+                        <dt>status <span class="property-type">string</span></dt>
+                        <dd>"OK" si l'action demandée a pu êttre réalisée, "NOK" si une erreur a eu lieu, voir <code>msg.payload.message</code> pour plus d'informations. </dd>
+
+                        <dt>message <span class="property-type">string</span></dt>
+                        <dd>Le message envoyé par What Is What (peut être vide).</dd>
+
+                        <dt>origin <span class="property-type">object</span></dt>
+                        <dd>Les informations contenues dans le message original (voir chaque noeud pour connaître sa structure).</dd>
+
+                        <dt class="optional">wiwRespContext <span class="property-type">object</span></dt>
+                        <dd>Un attribut permettant à l'utilisateur de stocker des informations dont il pourrait avoir besoin une fois la réponse au message reçue.</dd>
+                    </dl>
+                </dd>
+            </dl>
+        </li>
+        <li>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">string | buffer</span></dt>
+                <dd>Cette sortie fournit les message de "log" dont le format est incorrect.</dd>
+            </dl>
+        </li>    
+        <li>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">string | buffer</span></dt>
+                <dd> Cette sortie fournit les messages dont la réponse est attendue mais n'a pas été reçue dans le temps imparti.
+                    <dl class="message-properties">
+                        <dt>type<span class="property-type">string</span></dt>
+                        <dd>Le type de l'évènement qui est "RES". </dd>
+
+                        <dt>tstampISO<span class="property-type">string</span></dt>
+                        <dd>Le timestamp au le format ISO.</dd>
+
+                        <dt>tstamp<span class="property-type">number</span></dt>
+                        <dd>Le timestamp exprimé en nombre de millisecondes depuis le 1er Janvier 1970 à minuit dans la zone UTC.</dd>
+
+                        <dt>msgId<span class="property-type">number</span></dt>
+                        <dd>L'identifiant du message original. </dd>
+
+                        <dt>status<span class="property-type">string</span></dt>
+                        <dd>"Timeout"</dd>
+
+                        <dt>message<span class="property-type">string</span></dt>
+                        <dd>"Response has not been received".</dd>
+
+                        <dt>origin<span class="property-type">object</span></dt>
+                        <dd>Les informations contenues dans le message original (voir chaque noeud pour connaître sa structure).</dd>
+
+                        <dt class="optional">wiwRespContext<span class="property-type">object</span></dt>
+                        <dd>Un attribut permettant à l'utilisateur de stocker des informations dont il pourrait avoir besoin une fois la réponse au message reçue.</dd>
+                    </dl>
+                </dd>
+            </dl>
+        </li>  
+    </ol>
+
+    <h3>Paramètres</h3>
+    <p>Ce noeud ne peut pas fonctionner si aucun noeud de configuration de type <code>wiwMqttConfig</code> ne lui est affecté. <br/>
+    Pour ce faire, rendez vous dans les propriétés du noeud et créez un nouveau noeud de configuration ou affectez-lui en un que vous avez déjà créé.</p>
+</script>

@@ -1,0 +1,255 @@
+<script type="text/javascript">
+    RED.nodes.registerType('entities2Wiw', {
+        category: 'WIW Bridge',
+        color: '#C0C0C0',
+        defaults: {
+            name: {
+                value: "",
+                validate: RED.validators.regex(/[a-z]*/),
+                required: false
+            },
+            configuration: {
+                value: "",
+                type: "wiwMqttConfig",
+                required: true
+            }
+        },
+        icon: "WIWicon.png",
+        align: "right",
+        inputs: 1,
+        outputs: 1,
+        label: function () {
+            return this.name || "entities2Wiw";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="entities2Wiw">
+    <style>
+        .categories {
+            border: 2px solid grey;
+            color: grey;
+            margin: 20px;
+            padding: 20px;
+        } 
+    </style>
+    <div class="categories">
+        <h2>Node</h2>
+        <div class="form-row">
+            <label for="node-input-name"><i class="icon-tag"></i> Name </label>
+            <input type="text" id="node-input-name" placeholder="Name">
+        </div>
+    </div>
+    <div class="categories">
+        <h2>Configuration node</h2>
+        <div class="form-row">
+            <label for="node-input-configuration"><i class="icon-wrench"></i> Configuration </label>
+            <input type="text" id="node-input-configuration" >
+        </div>
+    </div> 
+</script>
+
+<script type="text/x-red" data-help-name="entities2Wiw" data-lang="en-US">
+    <!--<img src="/logoWIW.png" alt="logo What Is What">-->
+
+    <h2><b>entities2Wiw</b></h2>
+
+    <p>Builds a message to add or modify entities onto What Is what.</p>
+
+    <h3>Input/h3>
+    <dl class="message-properties">
+        <dt>payload or wiwEntities<span class="property-type">array</span></dt>
+        <dd> An array of entities, each entity contains:  
+            <dl class="message-properties">
+                <dt>dispName <span class="property-type">string</span></dt>
+                <dd>The entity's name (user-friendly). It has to be unique within What Is What. Can be used to search for the entity in What Is What. </dd>
+
+                <dt class="optional">dispDescription <span class="property-type">string</span></dt>
+                <dd> The entity's description (user-friendly). Can be used to search for the entity in What Is What. </dd>
+
+                <dt class="optional">template <span class="property-type">string</span></dt>
+                <dd> The template's identifier of the entity. This attribute has to be empty or match a template's identifier known by What Is What.</dd>
+
+                <dt class="optional">reference <span class="property-type">string</span></dt>
+                <dd> The entity's reference name. This attribute has to be empty or match a reference's name known by What Is What.</dd>
+
+                <dt class="optional">parent <span class="property-type">string</span></dt>
+                <dd> The entity's parent name. This attribute has to be empty or match an entity's name known by What Is What.</dd>
+
+                <dt class="optional">properties <span class="property-type">buffer</span></dt>
+                <dd> An array of properties whose each one contains :   
+                    <dl class="message-properties">
+                        <dt>dispName <span class="property-type">string</span></dt>
+                        <dd> The property's name (user-friendly).</dd>
+
+                        <dt>type <span class="property-type">string</span></dt>
+                        <dd>The property's type which has to be know by What Is What.</dd>
+
+                        <dt>unit <span class="property-type">string</span></dt>
+                        <dd>The property's unit which has to be know by What Is What.</dd>
+
+                        <dt class="optional">dataSource <span class="property-type">string</span></dt>
+                        <dd> The datasource corresponding to this property, it cans be  : 
+                            <ul>
+                                <li> not provided : in this case, the datasource will be a manual property (a manual property can only be changed by users via UI), </li>
+                                <li> an existing datasource: in this case, <code>source</code> and <code>name</code> fields of the datasource have to be provided (see <code>dataSources2Wiw</code>), </li>
+                                <li> a new datasource : in this case every attribute of the datasource has to be provided (see <code>dataSources2Wiw</code>). </li>
+                            </ul>
+                        </dd>
+
+                        <dt class="optional">value <span class="property-type">string</span></dt>
+                        <dd>The current datasource's value, only available if <code>dataSource</code> is not provided.</dd>
+                    </dl>
+                </dd>
+            </dl>
+        </dd>
+        
+        <dt class="optional">wiwReqResp <span class="property-type"> number </span></dt>
+        <dd>During the entity's declaration, a response is expected from What Is What to make sure declaration has been done successfully. <code>wiwReqResp</code> contains the repsponse maximal wainting time (timeout in ms). If not provided, <code>Time out of Response</code> of configuration node is used. </dd>
+    
+        <dt class="optional">wiwMqttTopic <span class="property-type"> string </span></dt>
+        <dd>Mqtt Topic to which messages will be sent. If not provided, <code>Channel Declaration Out</code> from configuration node is used. </dd>
+    
+        <dt class="optional">wiwMqttQos <span class="property-type"> string </span></dt>
+        <dd> 
+            <ul>
+                <li> 0 : forbidden,</li>
+                <li> 1 : received at least once,</li>
+                <li> 2 : received once and only once.</li>
+            </ul>
+            <p> It is recommended, for speed reason, to use the value 1.</p>
+         </dd>
+
+         <dt class="optional"> wiwRespContext<span class="property-type">object</span>
+            <dd> This attribute is used to contain any information which could be usefull for the user once the response message has been received.
+            </br> For example, to declare objects from a SQL database, we may provide the name of the table that needs to ne updated to mark that declaration has been done.   
+            </br> See <code>wiwLogs</code>.
+            </dd>
+        
+        <h4><i>Example :</i></h4>
+        <p>Declaration of a entity named "Machine de démo" of type EQUIPMENT containing 3 different properties :
+        <ul>
+            <li> Pause : a new datasource,</li>
+            <li> Speed: a datasource already declared in What Is What,</li>
+            <li> Date/time of last maintenance : which has to be manually provided by user.</li>
+        </ul>
+        <pre><code>msg:{ 
+        wiwEntities = [{
+            dispName : "Demonstration machine",
+            template : "EQUIPMENT",
+            properties : [
+            {
+                dispName : "Pause",
+                type : "number",
+                unit : "integer",
+                datasource : {
+                    source : "machinedemo",
+                    name : "pause",
+                    dispName :  "Demonstration machine - Pause",
+                    type : "NUMBER",
+                    unit : "number",
+                    twoWay : true
+                }
+            },
+            {
+                dispName : "Speed",
+                type : "number",
+                unit : "integer",
+                datasource : {
+                    source : "machinedemo",
+                    name : "speed"
+                }
+            },
+            {
+                dispName : "Date/time of last maintenance",
+                type : "timestamp",
+                unit : "timestamp_with_seconds",
+                value : 1564580667396
+            }]
+            }]
+        }</code></pre>
+    </dl>
+
+
+    <h3>Output</h3>
+        <dl class="message-properties">
+            <dt>payload <span class="property-type">object</span></dt>
+            <dd>An object containing an array of the entities to declare and eventually containing an array of new datasources to declare.</dd>
+
+            <dt>topic <span class="property-type">string</span></dt>
+            <dd>Le MQTT topic to which messages have to be sent. See input <code>wiwMqttTopic</code> for more information. </dd>
+
+            <dt>qos <span class="property-type">number </span></dt>
+            <dd>Le Mqtt Qos used. See input <code>wiwMqttQos</code> for more information.</dd>
+            
+            <dt>retain <span class="property-type">boolean</span></dt>
+            <dd>This value is normally always <code>false</code>. It is recommended to let this value to <code>false</code>.</dd>
+            
+            <h4><i>Example :</i></h4>
+            <pre><code>msg:{
+            payload: {
+                datasources: [{
+                    id : "machinedemo#pause",
+                    name :  "Demonstration machine - Pause",
+                    type : "NUMBER",
+                    unit : "number",
+                    twoWay : true
+                }],
+                entities: [{
+                    dispName : "Demonstration machine",
+                    template : "EQUIPMENT",
+                    properties : [
+                    {
+                        dispName : "Pause",
+                        type : "number",
+                        unit : "integer",
+                        dsId : "machinedemo#pause"
+                    },
+                    {
+                        dispName : "Speed",
+                        type : "number",
+                        unit : "integer",
+                        dsId : "machinedemo#speed"
+                    },
+                    {
+                        dispName : "Date/time of last maintenance",
+                        type : "timestamp",
+                        unit : "timestamp_with_seconds",
+                        value : 1564580667396
+                    }
+                    ]
+                }],
+                tstamp : 1564580667396,
+                msgId : 3,
+                reqResp: "10000",
+            },
+            topic : "demo-integ/decl_out",
+            retain : false,
+            qos : 1
+            }</code></pre>
+
+            <h4>Attribut wiwLogs origin</h4>
+
+            <p> A log message is saved into configuration node each time a message is sent to declare entities. This message contains an <code>origin</code> attribute which summarizes data sent to What Is What.
+                In the case of the message above, <code>origin</code> attribute may look like : </p>
+            <pre><code>origin : {
+                msgId : 3,
+                wiwTstamp : 1564580667396,
+                nodeName : "entities to WIW",
+                nodeId : "87e7b092.42c22",
+                nodeType : "entities2Wiw",
+                data : {           
+                    wiwSource: ["machinedemo"],
+                    datasourcesIds:["machinedemo#pause"],
+                    entitiesIds: ["Demonstration machine"]
+                }
+            }</code></pre>
+
+            <p> ⚠️ This message has to be received at least once. Under Mqtt it has to be sent in <code>QOS1</code> or <code>QOS2</code> without <code>retained</code>.<br />
+            Make sure that the Mqtt node doesn't modify this values without such having an unstable communication with What Is What.</p>
+        </dl>
+
+        <h3>Parameters</h3>
+        <p>This node can not work without a <code>wiwMqttConfig</code> configuration node. <br/>
+        Go to the node's properties and create a new configuration node or select an existing one in the list.</p>
+</script>

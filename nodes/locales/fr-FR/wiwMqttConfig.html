@@ -1,0 +1,39 @@
+<script type="text/x-red" data-help-name="wiwMqttConfig" data-lang="fr-FR">
+    <!--<img src="/logoWIW.png" alt="logo What Is What">-->
+
+    <h2><b>wiwMqttConfig</b></h2>
+
+    <p>Ce noeud de configuration sert à déclarer les différents paramètres nécessaires à la communication avec What Is What. </p>
+
+    <p>Ce noeud est utile à tous les noeuds de communication. Il doit être commun à tous les noeuds communiquant avec le même What Is What car il assure la cohérence de la communication de tous ces noeuds avec What Is What. </p>
+    
+    <p>Il est par exemple en charge de la gestion de l'identifiant des messages qui est unique.</p> 
+
+    <h3>Mqtt</h3>
+    <p><code>Channel Declaration Out</code>est le topic utilisé pour la déclaration d'items (utilisé par <code>entities2Wiw</code> ou <code>dataSources2Wiw</code> par exemple). </p>
+    <p><codeChannel Value Out</code> est le topic utilisé pour l'envoie de valeurs (utilisé par <code>valuesObjects2Wiw</code> par exemple). </p>
+    <p><code>Channel System Out</code> est le topic utilisé pour les demandes de changement dans le système (comme le fait <code>system2Wiw</code> par exemple). </p>
+    <p><code>Qos</code> est le qos utilisé par chaque noeud (sauf les noeuds modifiants le système comme <code>system2Wiw</code>) pour l'envoie de leurs messages. </p>
+
+    <h3>Logs</h3>
+    <p><code>wiwMqttConfig</code> stocke une liste des messages auxquels une réponse est attendue (notament pour les déclarations d'entités et des sources de données). 
+    Voir <code>wiwLogs</code> et <code>wiwCheck</code>pour plus d'informations.</p>
+    <p><code>Timeout of Response</code> est le timeout par défaut utilisé pour les noeuds de déclaration (comme <code>entities2Wiw</code> ou <code>dataSources2Wiw</code> par exemple). </p>
+
+    <h3>Message buffer</h3>
+    <p>>wiwMqttConfig</code> stocke les messages qui n'ont pu être envoyés car Mqtt n'était pas connecté à ce moment. 
+    Ces messages seront envoyés via le noeud <code>wiwCheck</code> une fois la connexion rétablie.</p>
+    <p><code>Default connection status</code> détermine le status de la connexion par défault
+        <ul>
+            <li> <code>true</code> :  au démarrage la connexion est considérée comme établie, non recommandée car il y a un risque de perte de messages, mais permet de se passer de <code>wiwCheck</code> (pour des tests par exemple),</li>
+            <li> <code>false</code> : au démarrage on considère qu'il n'y a pas de connexion, recommandée car les messages seront stockés jusqu'à ce qu'une connexion soit établie, mais nécessaite un noeud <code>wiwCheck</code>.</li>
+        </ul>
+    </p>
+    <p><code>Max Buffer Size</code> est le nombre maximum de messages stockés lors d'une déconnexion de Mqtt.</p>
+    <p><code>Buffer management</code> : le mode de gestion si le nombre de messages maximum est dépassé.
+        <ul>
+            <li>keep newest : les anciens messages sont supprimés pour être remplacés par les plus récents,</li>
+            <li>keep oldest : les messages récents ne sont pas enregistrés.</li>
+        </ul>
+    </p>
+</script>

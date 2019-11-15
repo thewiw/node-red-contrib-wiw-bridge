@@ -1,0 +1,156 @@
+<script type="text/javascript">
+    RED.nodes.registerType('valuesObject2Wiw', {
+        category: 'WIW Bridge',
+        color: '#C0C0C0',
+        defaults: {
+            name: {
+                value: "",
+                validate: RED.validators.regex(/[a-z]*/),
+                required: false
+            },
+            configuration: {
+                value: "",
+                type: "wiwMqttConfig",
+                required: true
+            }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "WIWicon.png",
+        align: "right",
+        label: function () {
+            return this.name || "valuesObject2Wiw";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="valuesObject2Wiw">
+    <style>
+        .categories {
+            border: 2px solid grey;
+            color: grey;
+            margin: 20px;
+            padding: 20px;
+        } 
+    </style>
+    <div class="categories">
+        <h2>Node</h2>
+        <div class="form-row">
+            <label for="node-input-name"><i class="icon-tag"></i> Name </label>
+            <input type="text" id="node-input-name" placeholder="Name">
+        </div>
+    </div>
+    <div class="categories">
+        <h2>Configuration node</h2>
+        <div class="form-row">
+            <label for="node-input-configuration"><i class="icon-wrench"></i> Configuration </label>
+            <input type="text" id="node-input-configuration" >
+        </div>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="valuesObject2Wiw" data-lang="en-US">
+    <!--<img src="/logoWIW.png" alt="logo What Is What">-->
+    
+    <h2><b>valuesObject2Wiw</b></h2>
+
+    <p>Builds a message to send values to What Is What. Values are stored into a standard object. </p>
+    <h3> Input </h3>
+    <dl class="message-properties">
+        <dt>payload or wiwValues<span class="property-type">JSON object</span></dt>
+        <dd>Each attribute is dtasource's name while each attribute’s value is the reported value. </dd>
+
+        <dt>wiwSource <span class="property-type"> string </span></dt>
+        <dd>the datasource's origin name. It has to match <code>source</code> attribute used to declare datasource (see <code>datasources2Wiw</code>).</dd>
+
+        <dt class="optional">wiwTstamp <span class="property-type"> number </span></dt>
+        <dd>Number of milliseconds since january 1st, 1970 at midnight in UTC time zone when the message is build. Calculated if missing.</dd>
+
+        <dt class="optional"> wiwReqResp <span class="property-type"> number </span>
+            <dd>During values Object declaration, a response can be expected from What Is What to make sure the declaration has been done successfully. 
+            <code>wiwReqResp</code> contains the response maximal waiting time (timeout in ms). If not provided, no response will be sent. </dd>
+        
+        <dt class="optional">wiwMqttTopic <span class="property-type"> string </span></dt>
+        <dd>Mqtt Topic to which messages will be sent. If not provided, <code>Channel Declaration Out</code> from the Configuration node is used. </dd>
+
+        <dt class="optional"> wiwMqttQos <span class="property-type"> string </span>
+        <dd> 
+            <ul>
+                <li> 0 : forbidden,</li>
+                <li> 1 : received at least once,</li>
+                <li> 2 : received once and only once.</li>
+            </ul>
+            <p> It is recommended, for speed reason, to use value 1.</p>
+        </dd>
+
+        <dt class="optional"> wiwRespContext<span class="property-type">object</span>
+        <dd> This attribute is used to contain any information which coulb be usefull for the user once the response message has been received.
+        </br> For example, if we want to declare objects from a SQL database we could store the name of the table we need to update to mark declaration has been done.   
+        </br> See <code>wiwLogs</code>.
+        </dd>
+
+        <h4><i>Example :</i></h4>
+        <p>Write speed and pause values in the What Is What.</p>
+        <pre><code>msg:{
+            wiwValues : {
+                speed : 15,
+                pause : 0
+            },
+            wiwSource : "machinedemo"
+        }</code></pre>
+    </dl>
+
+    <h3>Output</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">JSON object</span></dt>
+        <dd>The content of the message.</dd>
+
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>The MQTT topic to publish to. See input <code>Channel Declaration Out</code> for more information. </dd>
+
+        <dt>qos <span class="property-type">number </span></dt>
+        <dd>The Mqtt Qos used. see input <code>wiwMqttQos</code> for more information.</dd>
+        
+        <dt>retain <span class="property-type">boolean</span></dt>
+        <dd>This value is normally always <code>false</code>. It is recommended to let this value to <code>false</code>.</dd>
+        
+        <h4><i>Exemple :</i></h4>
+        <pre><code>msg:{
+            payload : {
+                vals : [
+                ["machinedemo#speed", 1564742064933, 15],
+                ["machinedemo#pause", 1564742064933, 0]
+                ],
+                msgId : 7
+            },
+            wiwTstamp : 1564742064933,
+            topic: "demo-integ/val_out",
+            retain: false,
+            qos: "1"
+        }</code></pre>
+
+        <h4>Attribut wiwLogs origin</h4>
+
+        <p> If a response is requested from What Is What via <code>reqResp</code>, a log message will be saved in the configuration node. This mesage contains an <code>origin</code> attribute which summarize data sent to the What Is What.
+        In the case of the message bellow , the <code >origin</code> attribute will looks like : </p>
+        <pre><code>origin : {
+            msgId : 7,
+            wiwTstamp : 1564742064933,
+            nodeName : "values to WIW",
+            nodeId : "f938e905.a16808",
+            nodeType : "valuesObject2Wiw",
+            data : {
+                vals : [
+                ["machinedemo#speed", 1564742064933, 15],
+                ["machinedemo#pause", 1564742064933, 0]
+                ]
+            }
+        }</code></pre>
+        <p> ⚠️ This message has to be received only once. Under Mqtt it has to be sent in "QOS2" without "retained".<br />
+            Make sure that Mqtt node doesn't modify this values without such having an unstable communication with the What Is What.</p>
+    </dl>
+    
+    <h3>Parameters</h3>
+    <p>This node can not work without a <code>wiwMqttConfig</code> configuration node. <br/>
+        Go to node's properties and create a new configuration node or select an existing one in the list.</p>
+</script>

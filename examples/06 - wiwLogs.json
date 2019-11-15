@@ -1,0 +1,183 @@
+[
+    {
+        "id": "6316d1c4.2a0e3",
+        "type": "tab",
+        "label": "wiwLogs",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "2a257f11.ee899",
+        "type": "wiwLogs",
+        "z": "6316d1c4.2a0e3",
+        "name": "",
+        "configuration": "5917194.69153e8",
+        "x": 531.6666870117188,
+        "y": 448.5,
+        "wires": [
+            [
+                "e9773bb6.517008"
+            ],
+            [
+                "fc25daf9.1ff508"
+            ],
+            [
+                "17245805.d64358"
+            ],
+            [
+                "9acc1ce4.010b1"
+            ],
+            [
+                "c2d1d49e.b0db78"
+            ]
+        ]
+    },
+    {
+        "id": "985776e8.035098",
+        "type": "mqtt in",
+        "z": "6316d1c4.2a0e3",
+        "name": "mqtt in",
+        "topic": "example/log_in",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "754b50b.ffc2fb",
+        "x": 271.6666946411133,
+        "y": 448.00001287460327,
+        "wires": [
+            [
+                "2a257f11.ee899"
+            ]
+        ]
+    },
+    {
+        "id": "e9773bb6.517008",
+        "type": "debug",
+        "z": "6316d1c4.2a0e3",
+        "name": "logs messages",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 854.6666870117188,
+        "y": 319,
+        "wires": []
+    },
+    {
+        "id": "fc25daf9.1ff508",
+        "type": "debug",
+        "z": "6316d1c4.2a0e3",
+        "name": "known res messages",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 873.6666870117188,
+        "y": 389,
+        "wires": []
+    },
+    {
+        "id": "17245805.d64358",
+        "type": "debug",
+        "z": "6316d1c4.2a0e3",
+        "name": "unknown res messages",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 883.6666870117188,
+        "y": 450,
+        "wires": []
+    },
+    {
+        "id": "9acc1ce4.010b1",
+        "type": "debug",
+        "z": "6316d1c4.2a0e3",
+        "name": "unknown messages",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 872.6666870117188,
+        "y": 515,
+        "wires": []
+    },
+    {
+        "id": "c2d1d49e.b0db78",
+        "type": "debug",
+        "z": "6316d1c4.2a0e3",
+        "name": "timeout messages",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 863.6666870117188,
+        "y": 573,
+        "wires": []
+    },
+    {
+        "id": "356012ed.77017e",
+        "type": "inject",
+        "z": "6316d1c4.2a0e3",
+        "name": "",
+        "topic": "",
+        "payload": "MSG TIMEOUT",
+        "payloadType": "str",
+        "repeat": "2",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 279.66668701171875,
+        "y": 502,
+        "wires": [
+            [
+                "2a257f11.ee899"
+            ]
+        ]
+    },
+    {
+        "id": "5917194.69153e8",
+        "type": "wiwMqttConfig",
+        "z": "",
+        "name": "WhatIsWhat",
+        "chnlSystemOut": "demo-integ/sys_out",
+        "chnlDeclareOut": "demo-integ/decl_out",
+        "chnlValueOut": "demo-integ/val_out",
+        "qos": "1",
+        "reqResp": "10000",
+        "connected": "false",
+        "sendMsgsMaxCount": "100",
+        "sendMsgsKeepMostRecent": "true"
+    },
+    {
+        "id": "754b50b.ffc2fb",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "démo-intégration (dev)",
+        "broker": "100.64.0.204",
+        "port": "30883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    }
+]

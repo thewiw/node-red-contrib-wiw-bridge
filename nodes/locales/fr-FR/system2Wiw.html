@@ -1,0 +1,93 @@
+<script type="text/x-red" data-help-name="system2Wiw" data-lang="fr-FR">
+    <!--<img src="/logoWIW.png" alt="logo What Is What">-->
+
+    <h2><b>system2Wiw</b></h2>
+    
+    <p>Ce noeud permet de réinitialiser et configurer la communication avec What Is What.<br/> 
+        Il sert à : 
+        <ul>
+            <li>réinitialiser les identifiants des messages,</li>
+            <li>définir les types de messages "log" que l'on souhaite recevoir de What Is What.</li>
+        </ul>
+        Il est recommandé d'exécuter ce noeud à chaque demarrage ou connexion à What Is What.
+    </p>
+    <h3>Entrée</h3>
+    <p>Le message d'entrée doit contenir les attributs décrits ci-dessous</p>
+    <dl class="message-properties">
+        <dt>payload ou wiwSystem<span class="property-type">object</span></dt>
+        <dd> Contient la liste des actions demandées au What Is What.<br/>
+            Il peut avoir 2 attributs : 
+            <dl class="message-properties">
+                <dt class="optional">resetCom
+                    <span class="property-type">boolean</span>
+                </dt>
+                <dd> <code>true</code> : la communication avec What Is What est réinitialisée : 
+                    <ul>
+                        <li>le buffer contenant les messages à envoyer est vidé (les messages non envoyés sont perdus)</li> 
+                        <li>la liste contenant les réponses attendues est vidée</li>
+                        <li>l'identifiant des messages envoyés est remis à 0</li>
+                    </ul>
+                </dd>
+                <dt class="optional">setLogWhiteList <span class="property-type">buffer</span></dt>
+                <dd>Contient la liste des messages "log" que l'on souhaite recevoir de What Is What.<br />
+                    Les messages "log" sont asynchrones et servent à connaître l'état de What Is What.<br />
+                    Les messages "log" peuvent être de type :
+                    <ul>
+                        <li><code>*</code> : tous les messages sont acceptés</li>
+                        <li><code>Info</code> : les messages d'information sont acceptés </li>
+                        <li><code>Warn</code> : les messages d'avertissement sont acceptés </li>
+                        <li><code>Error</code> : les messages d'erreur sont acceptés </li>
+                        <li><code>Fatal</code> : les messages fatals sont acceptés </li>
+                    </ul>
+                    Voir <code>wiwLogs</code> pour plus d'informations.
+                </dd>
+            </dl>
+        </dd>
+
+        <dt class="optional"> wiwMqttTopic <span class="property-type"> string </span></dt>
+        <dd>Mqtt Topic auquel les messages vont être envoyés. S'il n'est pas fourni, <code>Channel System Out</code> du noeud de configuration sera utilisé. </dd>
+
+        <h4><i>Exemple :</i></h4>
+        <p> reset communication, acceptation des messages "log" de type 'fatal", '"error" et "warning"</p>
+        <pre><code>msg:{ 
+            wiwSystem : {
+                resetCom : true,
+                setLogWhiteList : ["fatal", "error", "warn"]
+            }
+        }</code></pre>
+    </dl>
+
+    <h3>Sortie</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>Les actions demandées au système.</dd>
+
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>Le MQTT topic auquel les messages sont envoyés. Voir l'entrée <code>wiwMqttTopic</code> pour plus d'informations. </dd>
+
+        <dt class="optional">qos <span class="property-type">number </span></dt>
+        <dd> Mqtt Qos : doit toujpours valoir 2.</dd>
+        
+        <dt class="optional">retain <span class="property-type">boolean</span></dt>
+        <dd> Mqtt retain : doit toujours valoir <code>false</code>.</dd>
+    
+        <h4><i>Exemple :</i></h4>
+        
+        <pre><code>msg:{
+            payload: {
+                resetCom: true,
+                setLogWhiteList: ["fatal", "error", "warn"],
+                msgId: 1
+            },
+            topic : "demo-integ/sys_out",
+            retain : false,
+            qos : 2
+        }</code></pre>
+        <p> ⚠️ Ce message doit être reçu une fois et une seule. Sous MQTT il doit être envoyé en <code>QOS2</code> sans <code>retained</code>.<br />
+        Attention à ce que le noeud MQTT ne modifie pas ces valeurs sous peine d'avoir une communication instable avec What Is What.</p>
+    </dl>
+
+    <h3>Paramètres</h3>
+        <p>Ce noeud ne peut fonctionner si aucun noeud de configuration de type <code>wiwMqttConfig</code> ne lui est affecté. <br/>
+        Pour ce faire, rendez vous dans les propriétés du noeud et créez un nouveau noeud de configuration ou affectez-lui en un que vous avez déjà créé.</p>
+</script>

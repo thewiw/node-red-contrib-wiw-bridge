@@ -1,0 +1,204 @@
+<script type="text/javascript">
+    RED.nodes.registerType('wiwLogs', {
+        category: 'WIW Bridge',
+        color: '#C0C0C0',
+        defaults: {
+            name: {
+                value: "",
+                validate: RED.validators.regex(/[a-z]*/),
+                required: false
+            },
+            configuration: {
+                value: "",
+                type: "wiwMqttConfig",
+                required: true
+            }
+        },
+        inputs: 1,
+        outputs: 5,
+        icon: "WIWicon.png",
+        align: "left",
+        label: function () {
+            return this.name || "wiwLogs";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="wiwLogs">
+    <style>
+        .categories {
+            border: 2px solid grey;
+            color: grey;
+            margin: 20px;
+            padding: 20px;
+        } 
+    </style>
+    <div class="categories">
+        <h2>Node</h2>
+        <div class="form-row">
+            <label for="node-input-name"><i class="icon-tag"></i> Name </label>
+            <input type="text" id="node-input-name" placeholder="Name">
+        </div>
+    </div>
+    <div class="categories">
+        <h2>Configuration node</h2>
+        <div class="form-row">
+            <label for="node-input-configuration"><i class="icon-wrench"></i> Configuration </label>
+            <input type="text" id="node-input-configuration" >
+        </div>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="wiwLogs" data-lang="en-US">
+    <!--<img src="/logoWIW.png" alt="logo What Is What">-->
+
+    <h2><b>wiw2Logs</b></h2>
+    
+    <p>This node manages log messages sent by What Is What. Its goals are: </p>
+    <ul>
+        <li>to give responses sent by What Is What,</li>
+        <li>to prevent waiting response not received in due time (timeout),</li>
+        <li>to give standards log messages ("Fatal", "Error", "Warning", "Info", ... see <code>system2Wiw</code>),</li>
+        <li>to prevent receiption of incomprehensible log messages,</li>
+        <li>to prevent reception of unexpected response messages.</li>
+    </ul>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <p> ⚠️ Input of this node is a message comming from What Is What via a Mqtt communication. If input is directly linked to a Mqtt node, please make sur e the output of this node is a <code>JSON object</code> or <code>String</code>.</p>
+        <p>A second input is needed to check response message on timeout. We recommend to use an inject node with a reapeat time much below that timeout defines int configuration node. This inject node has to give the "MSG TIMEOUT" into msg.payload.</p>
+        <dt>payload <span class="property-type">JSON object</span></dt>
+        <dd>A log message received from What Is What. </dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <ol class="node-ports">
+        <p>This node has 5 distincts outputs. The fourth first ones are used to split log message into 4 different categories. The last one manages responses timeout.</p>
+        <li>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type"> JSON object </span></dt>
+                <dd>This output gives logs messages which are not responses (see <code>syste2Wiw</code>).
+                    <dl class="message-properties">
+                        <dt>type <span class="property-type"> string </span></dt>
+                        <dd> The type of log message ("info","warn","error","fatal")</dd>
+
+                        <dt>tstampISO<span class="property-type"> string </span></dt>
+                        <dd>The timestamp in the ISO format.</dd>
+
+                        <dt>tstamp <span class="property-type"> number </span></dt>
+                        <dd>The number of milliseconds since january 1st, 1970 at midnight in UTC time zone.</dd>
+
+                        <dt>message <span class="property-type"> string </span></dt>
+                        <dd>The message sent by What Is What. </dd>
+                    </dl>
+                </dd>
+            </dl>
+        </li>    
+        <li>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">JSON object</span></dt>
+                <dd> This output gives response message whise identifier is known by configuration node.
+                    <dl class="message-properties">
+                        <dt>type <span class="property-type"> string </span></dt>
+                        <dd>The type of the log message which is "RES". </dd>
+                            
+                        <dt>tstampISO<span class="property-type"> string </span></dt>
+                        <dd>The timestamp in the ISO format.</dd>
+
+                        <dt>tstamp <span class="property-type"> number </span></dt>
+                        <dd>The number of milliseconds since january 1st, 1970 at midnight in UTC time zone</dd>
+
+                        <dt>msgId <span class="property-type"> number </span></dt>
+                        <dd>The identifier of the message whose the log message is the response. </dd>
+
+                        <dt>status <span class="property-type"> string </span></dt>
+                        <dd>"Ok" if the action has been done, "NOK" if an error has occured. See <code>msg.payload.message</code> for more info. </dd>
+
+                        <dt>message <span class="property-type"> string </span></dt>
+                        <dd>The message sent by What Is What. </dd>
+
+                        <dt>origin <span class="property-type">object</span></dt>
+                        <dd>Data contains into the original message (see each node to knowv its format).</dd>
+
+                        <dt class="optional">wiwRespContext <span class="property-type">object</span></dt>
+                        <dd>An attribute letting the user store data which could be useful once the message responce has been received.</dd>
+                    </dl>
+                </dd>
+            </dl>
+        </li>    
+        <li>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type"> JSON object </span></dt>
+                <dd> This output gives response messages whose identifier is NOT known by configuration node.
+                    <dl class="message-properties">
+                        <dt>type <span class="property-type"> string </span></dt>
+                        <dd>The type of the log message which is "RES". </dd>
+
+                        <dt>tstampISO<span class="property-type"> string </span></dt>
+                        <dd>The timestamp in the ISO format.</dd>
+
+                        <dt>tstamp <span class="property-type"> number </span></dt>
+                        <dd>The number of milliseconds since january 1st, 1970 at midnight in UTC time zone</dd>
+
+                        <dt>msgId <span class="property-type"> number </span></dt>
+                        <dd>The identifier of the message whose the log message is the response. </dd>
+
+                        <dt>status <span class="property-type"> string</span></dt>
+                        <dd>"Ok" if the action has been done, "NOK" if an error has occured. See <code>msg.payload.message</code> for more info. </dd>
+
+                        <dt>message <span class="property-type"> string </span></dt>
+                        <dd>The message sent by What Is What. </dd>
+
+                        <dt>origin <span class="property-type">object</span></dt>
+                        <dd>Data contains into the original message (see each node to knowv its format).</dd>
+
+                        <dt class="optional">wiwRespContext <span class="property-type">object</span></dt>
+                        <dd>An attribute letting the user store data which could be useful once the message responce has been received.</dd>
+                    </dl>
+                </dd>
+            </dl>
+        </li>
+        <li>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type"> JSON object </span></dt>
+                <dd>The input message if not matching the expected template.</dd>
+            </dl>
+        </li>  
+        <li>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type"> JSON object </span></dt>
+                <dd> This output gives response messages whose response has not been received in du time.
+                    <dl class="message-properties">
+                        <dt>type<span class="property-type"> string </span></dt>
+                        <dd>The type of the log message which is "RES". </dd>
+
+                        <dt>tstampISO<span class="property-type"> string </span></dt>
+                        <dd>The timestamp in the ISO format.</dd>
+
+                        <dt>tstamp<span class="property-type"> number </span></dt>
+                        <dd>The number of milliseconds since january 1st, 1970 at midnight in UTC time zone</dd>
+
+                        <dt>msgId<span class="property-type"> number </span></dt>
+                        <dd>The identifier of the message whose the log message is the response. </dd>
+
+                        <dt>status<span class="property-type">string</span></dt>
+                        <dd>"Timeout"</dd>
+
+                        <dt>message<span class="property-type">string</span></dt>
+                        <dd>"Response has not been received".</dd>
+
+                        <dt>origin<span class="property-type">object</span></dt>
+                        <dd>Data contains into the original message (see each node to knowv its format).</dd>
+
+                        <dt class="optional">wiwRespContext<span class="property-type">object</span></dt>
+                        <dd>An attribute allowing the user to store data which could be useful once the message responce has been received.</dd>
+                    </dl>
+                </dd>
+            </dl>
+        </li>
+    </ol>
+
+    <h3>Parameters</h3>
+    <p>This node cannot work without a <code>wiwMqttConfig</code> configuration node. <br/>
+    Go to node's properties and create a new configuration node or select an existing one in the list.</p>
+</script>

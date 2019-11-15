@@ -1,0 +1,218 @@
+<script type="text/javascript">
+    RED.nodes.registerType('dataSources2Wiw', {
+        category: 'WIW Bridge',
+        color: '#C0C0C0',
+        defaults: {
+            name: {
+                value: "",
+                validate: RED.validators.regex(/[a-z]*/),
+                required: false
+            },
+            configuration: {
+                value: "",
+                type: "wiwMqttConfig",
+                required: true
+            }
+        },
+        icon: "WIWicon.png",
+        align: "right",
+        inputs: 1,
+        outputs: 1,
+        label: function () {
+            return this.name || "datasources2Wiw";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="dataSources2Wiw">
+    <style>
+        .categories {
+            border: 2px solid grey;
+            color: grey;
+            margin: 20px;
+            padding: 20px;
+        } 
+    </style>
+    <div class="categories">
+        <h2>Node</h2>
+        <div class="form-row">
+            <label for="node-input-name"><i class="icon-tag"></i> Name </label>
+            <input type="text" id="node-input-name" placeholder="Name">
+        </div>
+    </div>
+    <div class="categories">
+        <h2>Configuration node</h2>
+        <div class="form-row">
+            <label for="node-input-configuration"><i class="icon-wrench"></i> Configuration </label>
+            <input type="text" id="node-input-configuration" >
+        </div>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="dataSources2Wiw" data-lang="en-US">
+    <!--<img src="/logoWIW.png" alt="logo What Is What">-->
+
+    <h2><b>dataSources2Wiw</b></h2>
+
+    <p>Build a message to add or modify datasources onto What Is What. </p>
+    <h3>Input</h3>
+    <dl class="message-properties">
+        <dt>payload ou wiwDataSources<span class="property-type">array</span></dt>
+        <dd> An array of datasources, each datasource contains : 
+            <dl class="message-properties">
+                <dt>source<span class="property-type">string</span></dt>
+                <dd> This attribute defines the datasource's origin. It may be a machine's identifier, a PLC, a sensor, etc.
+                This attribute has to be part of every message that provides values and sent to What Is What or received from What Is What.</br>
+                Format (regex) : [a-zA-Z_][0-9a-zA-Z_]* </dd>
+
+                <dt>name  <span class="property-type">string</span></dt>
+                <dd>The datasource's name. This name has to be unique on a per-<code>source</code> basis.</br>
+                Format (regex) : [a-zA-Z_][0-9a-zA-Z_]* </dd>
+
+                <dt>dispName  <span class="property-type">string</span></dt>
+                <dd> The displayed name, designed to be user-friendly.</dd>
+
+                <dt>type  <span class="property-type">string</span></dt>
+                <dd> The value's type, can be NUMBER, STRING, LOCATION or DATETIME (does not match properties' types used in <code>entities2Wiw</code>).</dd>
+
+                <dt>unit  <span class="property-type">string</span></dt>
+                <dd> The value's unit, has to match an unit managed by What Is What.</dd>
+
+                <dt class="optional">twoWay<span class="property-type">boolean</span></dt>
+                <dd> 
+                    <ul>
+                        <li><code>false</code> : data is only sent to What Is What,</li>
+                        <li><code>true</code> : data is bi-directionnal, it may be modified from Node-RED and from What Is What.</li>
+                    </ul>
+                </dd>
+            </dl>
+        </dd>
+
+        <dt class="optional"> wiwReqResp <span class="property-type"> number </span>
+        <dd>During a dataSource declaration, a response is expected from What Is What to make sure the declaration has been done successfully. 
+        <code>wiwReqResp</code> contains the response's max waiting time (timeout in ms). If not provided, <code>Time out of Response</code> of configuration node is used. </dd>
+
+        <dt class="optional"> wiwMqttTopic <span class="property-type"> string </span>
+        <dd>Mqtt Topic to which messages will be sent. If not provided, <code>Channel Declaration Out</code> from configuration node is used. </dd>
+
+        <dt class="optional"> wiwMqttQos <span class="property-type"> string </span>
+        <dd> 
+            <ul>
+                <li> 0 : forbidden,</li>
+                <li> 1 : received at least once,</li>
+                <li> 2 : received once and only once.</li>
+            </ul>
+            <p> It is recommended, for speed reason, to use value 1.</p>
+        </dd>
+
+        <dt class="optional"> wiwRespContext<span class="property-type">object</span>
+        <dd> This attribute is used to contain any information that may be useful for users once response message has been received.
+        </br> For example, to declare objects from a SQL database, we may provide the name of the table that needs to ne updated to mark that declaration has been done.
+        </br>See <code>wiwLogs</code>.
+        </dd>
+
+        <h4><i>Example:</i></h4>
+        <p>Declaration of 3 new datasources on a production machine called "machinedemo" : 
+            <ul>
+                <li>Speed : the production's rate,</li>
+                <li>Product : the name of the current product in fabrication,</li>
+                <li>Start : the timestamp of the date/time of production's start.</li>
+            </ul>
+        </p>
+        <pre><code>msg:{
+        wiwDataSources : [{
+            source : "machinedemo",
+            name : "speed",
+            dispName : 'Demonstartion machine - Speed',
+            type : "NUMBER",
+            unit : "number"
+        },
+        {
+            source : "machinedemo",
+            name : "product",
+            dispName : "Demonstartion machine - Product",
+            type : "STRING",
+            unit : "string",
+            twoWay : true
+        },
+        {
+            source : "machinedemo",
+            name : "start",
+            dispName : "Demonstartion machine - Start",
+            type : "NUMBER",
+            unit : "timestamp_with_seconds"
+        }]
+    }</code></pre> 
+    </dl>
+
+    <h3>Output</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">array</span></dt>
+        <dd>An array of datasources to declare.</dd>
+
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>The MQTT topic to which message will be sent. See input <code>wiwMqttTopic</code> for more information. </dd>
+
+        <dt>qos <span class="property-type">number </span></dt>
+        <dd>The Mqtt Qos used. See input <code>wiwMqttQos</code> for more information.</dd>
+        
+        <dt>retain <span class="property-type">boolean</span></dt>
+        <dd>This value is normally always <code>false</code>. It is recommended to let this value to <code>false</code>.</dd>
+        
+        <h4><i>Example :</i></h4>
+        <pre><code>msg:{
+        payload: {
+            datasources : [
+            {
+                id: "machinedemo#speed",
+                type: "NUMBER",
+                unit: "number",
+                twoWay: false
+            },
+            {
+                id: "machinedemo#product",
+                type: "STRING",
+                unit: "string",
+                twoWay: true
+            },
+            {
+                id: "machinedemo#start",
+                type: "NUMBER",
+                unit: "timestamp_with_seconds",
+                twoWay: false
+            }
+            ],
+            tstamp: 1564654379952,
+            msgId: 4,
+            reqResp: "10000"
+        },
+        topic: "demo-integ/decl_out",
+        retain: false,
+        qos: "1"
+        }</code></pre>    
+
+        <h4>Origin attribute from wiwLogs</h4>
+
+        <p> A log message is saved into configuration node each time a message is sent to declare datasources. This message contains an <code>origin</code> attribute which summarizes data sent to What Is What.
+        In the case of the message above, <code>origin</code> attribute may look like this : </p>
+        <pre><code>origin : {
+            msgId : 4,
+            wiwTstamp : 1564654379952,
+            nodeName : "dataSources to WIW",
+            nodeId :  "ace42f4b.b0615",
+            nodeType : "dataSources2Wiw",
+            data : {
+                datasourcesIds:["machinedemo#speed","machinedemo#product","machinedemo#start"]
+            }
+        }</code></pre>
+        <p>The datasourcesIds attribute of data contains Ids of datasources we want to declare. 
+        From those Ids, it is possible to get datasources' origins and their source (split id on the '#' character).</p>
+        
+        <p> ⚠️ This message has to be received at least once. Under Mqtt it must be sent in <code>QOS1</code> or <code>QOS2</code> without <code>retained</code>.<br />
+        Make sure that the Mqtt node doesn't modify this values without such having an unstable communication with What Is What.</p>
+    </dl>
+
+    <h3>Parameters</h3>
+    <p>This node can not work without a <code>wiwMqttConfig</code> configuration node. <br/>
+        Go to node's properties and create a new configuration node or select an existing one in the list.</p>
+</script>

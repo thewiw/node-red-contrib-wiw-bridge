@@ -1,0 +1,340 @@
+[
+    {
+        "id": "a99c93e2.081fe",
+        "type": "tab",
+        "label": "comsBin",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "47402d1b.145754",
+        "type": "binary",
+        "z": "a99c93e2.081fe",
+        "name": "",
+        "pattern": "b32 => qtyMachine, b8 => pauseMachine, b16 => errorMachine, b16 => speed, x8,b8[52] =>id, b8[92]{32}z =>desc , b8[52]{32}z =>prodId, b32 => qty , b32 => qtyProduced,  b8[18]{32}z => start , b8[18]{32}z => end ",
+        "x": 758.0000190734863,
+        "y": 455.0000104904175,
+        "wires": [
+            [
+                "a4bbb209.6f9ec"
+            ]
+        ]
+    },
+    {
+        "id": "d4cb05f8.2e77b8",
+        "type": "s7comm write",
+        "z": "a99c93e2.081fe",
+        "connection": "ea914209.b35d3",
+        "payload": "{\"S7_Type\":\"DB\",\"S7_DBnum\":\"2\",\"S7_Datatype\":\"B\",\"S7_Offset\":\"1\",\"S7_BitOffset\":\"0\",\"S7_Quantity\":\"254\",\"S7_Name\":\"test\"}",
+        "s7Name": "test",
+        "topic": "",
+        "name": "",
+        "signalSetted": false,
+        "x": 1241.6667823791504,
+        "y": 431.000093460083,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "cfaefc.8543e108",
+        "type": "s7comm read",
+        "z": "a99c93e2.081fe",
+        "connection": "ea914209.b35d3",
+        "payload": "{\"S7_Type\":\"DB\",\"S7_DBnum\":\"2\",\"S7_Datatype\":\"B\",\"S7_Offset\":\"1\",\"S7_BitOffset\":\"0\",\"S7_Quantity\":\"254\",\"S7_Name\":\"test\"}",
+        "s7Name": "test",
+        "topic": "",
+        "name": "",
+        "signalSetted": false,
+        "none": "true",
+        "repeat": "",
+        "once": false,
+        "x": 381.6666717529297,
+        "y": 485.33342933654785,
+        "wires": [
+            [
+                "19b1a42f.e83a1c"
+            ]
+        ]
+    },
+    {
+        "id": "85055c5b.a9e16",
+        "type": "function",
+        "z": "a99c93e2.081fe",
+        "name": "write on S7",
+        "func": "\nvar buf = msg.payload;\nmsg.payload = {value: buf, 'fc': 16, 'address': 1 , 'quantity' : buf.length}\nreturn msg; \n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1058.6666946411133,
+        "y": 431.333345413208,
+        "wires": [
+            [
+                "d4cb05f8.2e77b8"
+            ]
+        ]
+    },
+    {
+        "id": "2ded941a.157d7c",
+        "type": "inject",
+        "z": "a99c93e2.081fe",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 209.66667938232422,
+        "y": 485.0000991821289,
+        "wires": [
+            [
+                "cfaefc.8543e108"
+            ]
+        ]
+    },
+    {
+        "id": "19b1a42f.e83a1c",
+        "type": "function",
+        "z": "a99c93e2.081fe",
+        "name": "read from S7",
+        "func": "msg.payload=Buffer.from(msg.payload.value);\nmsg.topic = \"from S7\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 557.6666793823242,
+        "y": 485.66668128967285,
+        "wires": [
+            [
+                "47402d1b.145754"
+            ]
+        ]
+    },
+    {
+        "id": "828ea83d.c72be8",
+        "type": "function",
+        "z": "a99c93e2.081fe",
+        "name": "convert S7 string to What Is What",
+        "func": "//The string has a 2 bytes header\n//The first byte is the string' max length\n//The second one is the string's length\n\nmsg.payload.id = Buffer.from(msg.payload.id);\nmsg.payload.id = msg.payload.id.toString('ascii', 2, msg.payload.id[1]+2);\n\nmsg.payload.desc = Buffer.from(msg.payload.desc);\nmsg.payload.desc = msg.payload.desc.toString('ascii', 2, msg.payload.desc[1]+2);\n\nmsg.payload.prodId = Buffer.from(msg.payload.prodId);\nmsg.payload.prodId = msg.payload.prodId.toString('ascii', 2, msg.payload.prodId[1]+2);\n\nmsg.payload.start = Buffer.from(msg.payload.start);\nmsg.payload.start = msg.payload.start.toString('ascii', 2, msg.payload.start[1]+2);\n\nmsg.payload.end = Buffer.from(msg.payload.end);\nmsg.payload.end = msg.payload.end.toString('ascii', 2, msg.payload.end[1]+2);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1117.6667785644531,
+        "y": 494.66668128967285,
+        "wires": [
+            [
+                "187a567b.ec4b6a"
+            ]
+        ]
+    },
+    {
+        "id": "756876fa.7afd48",
+        "type": "function",
+        "z": "a99c93e2.081fe",
+        "name": "convert Node-RED to S7",
+        "func": "//The string has a 2 bytes header\n//The first byte is the string' max length\n//The second one is the string's length\n\n//1st solution : \nvar id  = new Buffer(2+50,0x20); // create a fuffer of 52 times space character\nid[0] = 50; //fill the first byte with the evalue 50 which is the id's value maxLength \nid[1] = msg.payload.id.length; // fill the second byte with the current id's value length\nBuffer.from(msg.payload.id).copy(id, 2); // copy the id string at the 33rd place into the buffer id\nmsg.payload.id = id; //give to msg.payload.id the value of id\n\n\n//2nd solution\nmsg.payload.desc=Buffer.concat([new Buffer([50,msg.payload.desc.length]),Buffer.from(msg.payload.desc,'ascii')]);\n//concatenation of 2 buffers : 1st containing the header and 2nd containing the string\n//spaces have to be filled into the binary node \n\nmsg.payload.prodId=Buffer.concat([new Buffer([50,msg.payload.prodId.length]),Buffer.from(msg.payload.prodId,'ascii')]);\n\nmsg.payload.start=Buffer.concat([new Buffer([50,msg.payload.start.length]),Buffer.from(msg.payload.start,'ascii')]);\n\nmsg.payload.end=Buffer.concat([new Buffer([50,msg.payload.end.length]),Buffer.from(msg.payload.end,'ascii')]);\n\nmsg.topic = \"to S7\";\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 522.6666793823242,
+        "y": 450.0000104904175,
+        "wires": [
+            [
+                "47402d1b.145754"
+            ]
+        ]
+    },
+    {
+        "id": "a4bbb209.6f9ec",
+        "type": "switch",
+        "z": "a99c93e2.081fe",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "to S7",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "from S7",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 885.0000267028809,
+        "y": 455.00001335144043,
+        "wires": [
+            [
+                "85055c5b.a9e16"
+            ],
+            [
+                "828ea83d.c72be8"
+            ]
+        ]
+    },
+    {
+        "id": "82d0bc3e.1439c",
+        "type": "inject",
+        "z": "a99c93e2.081fe",
+        "name": "What Is What simulator",
+        "topic": "",
+        "payload": "{\"msgId\":5,\"vals\":[[\"machinedemo#speedMachine\",\"1564751327070\",250],[\"machinedemo#pauseMachine\",\"1564751327070\",0]]}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 681.0001373291016,
+        "y": 398.0000114440918,
+        "wires": [
+            [
+                "db8b6ebd.1964b"
+            ]
+        ]
+    },
+    {
+        "id": "db8b6ebd.1964b",
+        "type": "mqtt out",
+        "z": "a99c93e2.081fe",
+        "name": "mqtt in",
+        "topic": "example/val_in",
+        "qos": "",
+        "retain": "",
+        "broker": "754b50b.ffc2fb",
+        "x": 900.9930267333984,
+        "y": 397.8402624130249,
+        "wires": []
+    },
+    {
+        "id": "593ea801.716d88",
+        "type": "wiw2ValuesObject",
+        "z": "a99c93e2.081fe",
+        "name": "",
+        "configuration": "5917194.69153e8",
+        "x": 302.9896774291992,
+        "y": 450.0000114440918,
+        "wires": [
+            [
+                "756876fa.7afd48"
+            ]
+        ]
+    },
+    {
+        "id": "ea4ec0d2.0c3f8",
+        "type": "mqtt in",
+        "z": "a99c93e2.081fe",
+        "name": "mqtt in",
+        "topic": "demo-integ/val_in",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "754b50b.ffc2fb",
+        "x": 134.00001335144043,
+        "y": 449.3993453979492,
+        "wires": [
+            [
+                "593ea801.716d88"
+            ]
+        ]
+    },
+    {
+        "id": "509232cd.61726c",
+        "type": "mqtt out",
+        "z": "a99c93e2.081fe",
+        "name": "mqtt out",
+        "topic": "",
+        "qos": "",
+        "retain": "",
+        "broker": "754b50b.ffc2fb",
+        "x": 1237.000114440918,
+        "y": 546.0000190734863,
+        "wires": []
+    },
+    {
+        "id": "756a14b2.26205c",
+        "type": "valuesObject2Wiw",
+        "z": "a99c93e2.081fe",
+        "name": "",
+        "configuration": "5917194.69153e8",
+        "x": 1059.0104522705078,
+        "y": 546.357684135437,
+        "wires": [
+            [
+                "509232cd.61726c"
+            ]
+        ]
+    },
+    {
+        "id": "187a567b.ec4b6a",
+        "type": "function",
+        "z": "a99c93e2.081fe",
+        "name": "source declaration",
+        "func": "msg.wiwSource = \"demo-integ10\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1364.9271087646484,
+        "y": 494.8611001968384,
+        "wires": [
+            [
+                "756a14b2.26205c"
+            ]
+        ]
+    },
+    {
+        "id": "ea914209.b35d3",
+        "type": "s7comm",
+        "z": "",
+        "ip": "127.0.0.1",
+        "port": "102",
+        "rack": "0",
+        "slot": "2",
+        "payload": [
+            {
+                "S7_Type": "DB",
+                "S7_DBnum": "2",
+                "S7_Datatype": "B",
+                "S7_Offset": "1",
+                "S7_BitOffset": "0",
+                "S7_Quantity": "254",
+                "S7_Name": "test"
+            }
+        ]
+    },
+    {
+        "id": "754b50b.ffc2fb",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "démo-intégration (dev)",
+        "broker": "100.64.0.204",
+        "port": "30883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "5917194.69153e8",
+        "type": "wiwMqttConfig",
+        "z": "",
+        "name": "WhatIsWhat",
+        "chnlSystemOut": "demo-integ/sys_out",
+        "chnlDeclareOut": "demo-integ/decl_out",
+        "chnlValueOut": "demo-integ/val_out",
+        "qos": "1",
+        "reqResp": "10000",
+        "connected": "false",
+        "sendMsgsMaxCount": "100",
+        "sendMsgsKeepMostRecent": "true"
+    }
+]

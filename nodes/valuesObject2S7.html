@@ -1,0 +1,59 @@
+<script type="text/javascript">
+    RED.nodes.registerType('valuesObject2S7', {
+        category: 'WIW Bridge',
+        color: '#C0C0C0',
+        defaults: {
+            name: {
+                value: "",
+                validate: RED.validators.regex(/[a-z]*/),
+                required: false
+            }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "WIWicon.png",
+        align: "left",
+        label: function () {
+            return this.name || "valuesObject2S7";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="valuesObject2S7">
+    <style>
+        .categories {
+            border: 2px solid grey;
+            color: grey;
+            margin: 20px;
+            padding: 20px;
+        } 
+    </style>
+    <div class="categories">
+        <h2>Node</h2>
+        <div class="form-row">
+            <label for="node-input-name"><i class="icon-tag"></i> Name </label>
+            <input type="text" id="node-input-name" placeholder="Name">
+        </div>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="valuesObject2S7" data-lang="en-US">
+    <!--<img src="/logoWIW.png" alt="logo What Is What">-->
+
+    <h2>valuesObject2S7</h2>
+
+    <p>Transforms a message from <code>wiw2ValuesObject</code> node's output into a message compatible with a <code>node-red-contrib-s7</code> node.</p>   
+    
+        <h3>Input</h3>
+        <dl class="message-properties">
+            <dt>payload<span class="property-type">object</span></dt>
+            <dd>A message from <code>wiw2ValuesObject</code> node's output.</dd>
+        </dl>
+    
+        <h3>Output</h3>
+        <dl class="message-properties">
+            <dt>payload<span class="property-type">object</span></dt>
+            <dd>A message compatible with a <code>node-red-contrib-s7</code> node, allowing to send the data to a Siemens S7 PLC.</dd>
+    
+    
+</script>

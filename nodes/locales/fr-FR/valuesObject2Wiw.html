@@ -1,0 +1,104 @@
+<script type="text/x-red" data-help-name="valuesObject2Wiw" data-lang="fr-FR">
+    <!--<img src="/logoWIW.png" alt="logo What Is What">-->
+
+    <h2><b>valuesObject2Wiw</b></h2>
+    
+    <p>Ce noeud sert à créer un message pour envoyer des valeurs au What Is What. Les valeurs sont stockées dans un objet standard. </p>
+    <h3> Entrée </h3>
+    <dl class="message-properties">
+        <dt>payload or wiwValues<span class="property-type">object</span></dt>
+        <dd>Chaque attribut est le nom de la source de données et sa valeur est la valeur associée.</dd>
+
+        <dt>wiwSource <span class="property-type"> string </span>
+        <dd>Le nom de l'origine de la source de données, il doit correspondre à l'attribut <code>source</code> utilisé lors de la déclaration de la source de données (voir <code>dataSources2Wiw</code>).</dd>
+
+        <dt class="optional">wiwTstamp <span class="property-type"> number </span>
+        <dd>Le nombre de millisecondes depuis le 1er Janvier 1970 à minuit dans la zone UTC. S'il n'est pas fourni il sera calculé grâce à au couple date/heure actuel.</dd>
+
+        <dt class="optional"> wiwReqResp <span class="property-type"> number </span>
+        <dd>Temps d'attente maximal (timeout) de la réponse (en ms). S'il n'est pas fourni, aucune réponse ne sera envoyée.</dd>
+        
+        <dt class="optional">wiwMqttTopic <span class="property-type"> string </span>
+        <dd>Mqtt Topic auquel les messages vont être envoyés. S'il n'est pas fourni, <code>Channel Value Out</code> du noeud de configuration est utilisé. </dd>
+
+        <dt class="optional"> wiwMqttQos <span class="property-type">number</span>
+        <dd> 
+            <ul>
+                <li> 0 : interdit,</li>
+                <li> 1 : reçu au moins une fois,</li>
+                <li> 2 : reçu une et une seule fois.</li>
+            </ul>
+            <p> Il est conseillé, pour des raisons de vitesse, d'utiliser la valeur 1.</p>
+        </dd>
+
+        <dt class="optional"> wiwRespContext<span class="property-type">object</span>
+        <dd> Cet attribut sert à contenir des informations qui pourraient être utile à l'utilisateur lorsque la réponse au message sera reçue.
+        </br> Par exemple, si l'on veut déclarer des objets stockés dans une base de données SQL on peut stocker dans cet attribut le nom de la table à mettre à jour pour indiquer que la déclaration a réussi.
+        </br> Voir <code>wiwLogs</code>.
+        </dd>
+
+        <h4><i>Exemple :</i></h4>
+        <p>Ecriture des valeurs de vitesse et de pause dans What Is What.</p>
+        <pre><code>msg:{
+            wiwValues : {
+                speed : 15,
+                pause : 0
+            },
+            wiwSource : "machinedemo"
+        }</code></pre>
+    </dl>
+
+    <h3>Sortie</h3>
+        <dl class="message-properties">
+            <dt>payload <span class="property-type">JSON object</span></dt>
+            <dd>Le contenu du message.</dd>
+
+            <dt>topic <span class="property-type">string</span></dt>
+            <dd>Le MQTT topic auquel les messages sont envoyés. Voir l'entrée <code>wiwMqttTopic</code> pour plus d'informations. </dd>
+
+            <dt>qos<span class="property-type">number </span></dt>
+            <dd>Le Mqtt Qos utilisé. Voir l'entrée <code>wiwMqttQos</code> pour plus d'informations.</dd>
+            
+            <dt>retain <span class="property-type">boolean</span></dt>
+            <dd>Cette valeur est normalement toujours à <code>false</code>. Il est recommandé de laisser cette valeur à <code>false</code>.</dd>
+            
+            <h4><i>Exemple :</i></h4>
+            <pre><code>msg:{
+                payload : {
+                    vals : [
+                    ["machinedemo#speed", 1564742064933, 15],
+                    ["machinedemo#pause", 1564742064933, 0]
+                    ],
+                    msgId : 7
+                },
+                wiwTstamp : 1564742064933,
+                topic: "demo-integ/val_out",
+                retain: false,
+                qos: "1"
+            }</code></pre>
+
+            <h4>Attribut wiwLogs origin</h4>
+
+            <p> Si une réponse est demandée via l'attribut <code>reqResp</code>, un message de "log" est sauvegardé dans le noeud de configuration. Ce message contient un attribut <code>origin</code> qui résume les information envoyées au What Is What.
+            Dans le cas du message ci-dessus l'attribut <code >origin</code> aura le format suivant : </p>
+            <pre><code>origin : {
+                msgId : 7,
+                wiwTstamp : 1564742064933,
+                nodeName : "values to WIW",
+                nodeId : "f938e905.a16808",
+                nodeType : "valuesObject2Wiw",
+                data : {
+                    vals : [
+                    ["machinedemo#speed", 1564742064933, 15],
+                    ["machinedemo#pause", 1564742064933, 0]
+                    ]
+                }
+            }</code></pre>
+            <p> ⚠️ Ce message doit être reçu au moins une fois. Sous MQTT il doit être envoyé en <code>QOS1</code> ou <code>QOS2</code> sans <code>retained</code>.<br />
+                Attention à ce que le noeud MQTT ne modifie pas ces valeurs sous peine d'avoir une communication instable avec What Is What.</p>
+        </dl>
+
+        <h3>Paramètres</h3>
+        <p>Ce noeud ne peut pas fonctionner si aucun noeud de configuration de type <code>wiwMqttConfig</code> ne lui est affecté. <br/>
+        Pour ce faire, rendez vous dans les propriétés du noeud et créez un nouveau noeud de configuration ou affectez-lui en un que vous avez déjà créé.</p>
+</script>

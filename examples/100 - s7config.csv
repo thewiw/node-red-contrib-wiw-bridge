@@ -1,0 +1,11 @@
+DB2,DINT1;qtyMachine
+DB2,B5;pauseMachine
+DB2,I6;errorMachine
+DB2,I8;speedMachine
+DB2,S11.50;id
+DB2,S63.90;desc
+DB2,S155.50;prodId
+DB2,DINT207;qty
+DB2,DINT211;qtyProduced
+DB2,S215.16;start
+DB2,S233.16;end

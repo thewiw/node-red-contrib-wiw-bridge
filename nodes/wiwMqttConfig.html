@@ -1,0 +1,169 @@
+<script type="text/javascript">
+    RED.nodes.registerType('wiwMqttConfig', {
+        category: 'config',
+        defaults: {
+            name: { 
+                value: "", 
+                required: true, 
+                validate: RED.validators.regex(/[a-z]+/) 
+            },
+            chnlSystemOut: {
+                value: "sys_out",
+                required: true,
+                validate: RED.validators.regex(/[a-zA-Z_][0-9a-zA-Z_]*/)
+            },
+            chnlDeclareOut: {
+                value: "decl_out",
+                required: true,
+                validate: RED.validators.regex(/[a-zA-Z_][0-9a-zA-Z_]*/)
+            },
+            chnlValueOut: { 
+                value: "val_out",
+                required: true, 
+                validate: RED.validators.regex(/[a-zA-Z_][0-9a-zA-Z_]*/) 
+            },
+            qos: { 
+                value: 1, 
+                required: true 
+            },
+            reqResp: { 
+                value: 10000, 
+                required: true, 
+                validate: RED.validators.number(),
+                min : 0
+            },
+            connected: {
+                required : true,
+            },
+            sendMsgsMaxCount: {
+                value : 100 ,
+                required : true,
+                validate : RED.validators.number(),
+                min : 0,
+                max : 4096
+            },
+            sendMsgsKeepMostRecent:{
+                required : true,
+            }
+
+        },
+        label: function () {
+            return this.name || 'wiwMqttConfig';
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="wiwMqttConfig">
+    <style>
+        .categories {
+            border: 2px solid grey;
+            color: grey;
+            margin: 20px;
+            padding: 20px;
+        } 
+    </style>
+    <div class="categories">
+        <h2>Node </h2>
+        <div class="form-row">
+            <label for="node-config-input-name"><i class="icon-tag"></i> Name </label>
+            <input type="text" id="node-config-input-name">
+        </div>
+    </div>
+    <div class="categories">
+            <h2>Mqtt</h2>
+        <div class="form-row">
+            <label for="node-config-input-chnlDeclareOut"><i class="icon-tasks"></i> Channel Declaration Out</label>
+            <input type="text" id="node-config-input-chnlDeclareOut">
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-chnlValueOut"><i class="icon-tasks"></i> Channel Value Out</label>
+            <input type="text" id="node-config-input-chnlValueOut">
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-chnlSystemOut"><i class="icon-tasks"></i> Channel System Out</label>
+            <input type="text" id="node-config-input-chnlSystemOut">
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-qos"><i class="icon-bookmark"></i> Qos</label>
+            <select type="number" id="node-config-input-qos">
+                <option value=1 selected >1</option>
+                <option value=2 >2</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="categories">
+        <h2>Logs</h2>
+        <div class="form-row">
+            <label for="node-config-input-reqResp"><i class="icon-time"></i>Timeout of Response</label>
+            <input type="text" id="node-config-input-reqResp">
+        </div>
+    </div>
+
+    <div class="categories">
+        <h2>Message buffer</h2>
+        <div class="form-row">
+            <label for="node-config-input-connected"><i class="icon-time"></i>Default connection status</label>
+            <select type="boolean" id="node-config-input-connected">
+                <option value=true selected >true</option>
+                <option value=false >false</option>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-sendMsgsMaxCount"><i class="icon-time"></i>Max buffer size</label>
+            <input type="number" id="node-config-input-sendMsgsMaxCount">
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-sendMsgsKeepMostRecent"><i class="icon-time"></i>Buffer management </label>
+            <select type="boolean" id="node-config-input-sendMsgsKeepMostRecent">
+                <option value=false >keep oldest</option>
+                <option value=true selected >keep newest</option>
+            </select>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="wiwMqttConfig" data-lang="en-US">
+    <img src="/logoWIW.png" alt="logo What IS What">
+
+    <h2><b>wiwMqttConfig</b></h2>
+
+    <p>This configuration node is used to declare some parameters needed to setup communication with What Is What.</p>
+
+    <p>This node is used by all communication nodes. It has to be common to all nodes communicating with the same What Is What.</p>
+    
+    <p>If is, for example, in charge of message's identifier management.</p>
+
+    <h3>Mqtt</h3>
+    <p><code>Channel Declaration Out</code>is the topic used for items declaration (used by <code>entities2Wiw</code> or <code>dataSources2Wiw</code> for example). </p>
+    <p><codeChannel Value Out</code> is the topic used to send values (used by <code>valuesObjects2Wiw</code> for example). </p>
+    <p><code>Channel System Out</code> is the topic used to set system's properties (like <code>system2Wiw</code> for example). </p>
+    <p><code>Qos</code> is the qos used (unless for nodes modifying the system like <code>system2Wiw</code>) to send messages. </p>
+
+    <h3>Logs</h3>
+    <p><code>wiwMqttConfig</code> store an array of messages waiting a response from What Is What (mostly for entities and datasources daclarations). Voir <code>wiwMqttLogs</code> et <code>wiwCheck</code>pour plus d'informations.</p>
+    <p><code>Timeout of Response</code> is the default timeout used by declaration nodes (like <code>entities2Wiw</code> or <code>dataSources2Wiw</code> for example). </p>
+
+    <h3>Message buffer</h3>
+    <p>wiwMqttConfig</code> store messages which couldn't have been sent to What Is What due to a Mqtt connection default. 
+    These messages will be sent once the connection is re-established via <code>wiwCheck</code> node.</p>  
+    See <code>wiwLogs</code> and <code>wiwCheck</code> for more information.</p>
+    <p><code>Default connection status</code> determines the default connection's status
+        <ul>
+            <li> <code>true</code> :  at the start the connection is set as cpnnected, unrecommended because messages may be lost but afford to not use <code>wiwCheck</code> (for tests by example),</li>
+            <li> <code>false</code> : at the start the connexion is set as disconnected unless a connection is established. This configuration need use of <code>wiwCheck</code> node.</li>
+        </ul>
+    </p>
+    <p><code>Max Buffer Size</code> is the maximum amount of messages stored in the dedicated buffer when Mqtt connection is lost.</p>
+    <p><code>Buffer management</code> : the buffer management mode when <code>Max Buffer</code> is reached.
+        <ul>
+            <li>keep newest : old messages are deleted to be replaced by recent ones,</li>
+            <li>keep oldest : recent messages are not saved.</li>
+        </ul>
+    </p>
+</script>

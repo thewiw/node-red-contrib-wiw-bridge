@@ -1,0 +1,393 @@
+[
+    {
+        "id": "63721b7d.02c894",
+        "type": "tab",
+        "label": "entities2Wiw",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "e5081360.87b7d",
+        "type": "entities2Wiw",
+        "z": "63721b7d.02c894",
+        "name": "",
+        "configuration": "5917194.69153e8",
+        "x": 988.5729446411133,
+        "y": 265.9479465484619,
+        "wires": [
+            [
+                "6434cdc5.38d8e4"
+            ]
+        ]
+    },
+    {
+        "id": "6434cdc5.38d8e4",
+        "type": "mqtt out",
+        "z": "63721b7d.02c894",
+        "name": "",
+        "topic": "",
+        "qos": "",
+        "retain": "",
+        "broker": "754b50b.ffc2fb",
+        "x": 1159.576530456543,
+        "y": 269.8056125640869,
+        "wires": []
+    },
+    {
+        "id": "e00d2be9.2c0ef8",
+        "type": "function",
+        "z": "63721b7d.02c894",
+        "name": "machine declaration",
+        "func": "var machineName = \"Machine de démo-intégration 01\";\nvar source = \"demo-integ\";\n\nmsg.wiwEntities = [{\n    dispName : machineName,\n    template : \"EQUIPMENT\",\n    properties : [\n         {\n            dispName : \"Pause\",\n            type : \"number\",\n            unit : \"integer\",\n            datasource : {\n                source : source,\n                name : \"pauseMachine\",\n                dispName : machineName + \" - Pause\",\n                type : \"NUMBER\",\n                unit : \"number\",\n                twoWay : true\n            }\n        },\n        {\n            dispName : \"Vitesse\",\n            type : \"number\",\n            unit : \"integer\",\n            datasource : {\n                source : source,\n                name : \"speedMachine\",\n                dispName : machineName + \" - Vitesse de production\",\n                type : \"NUMBER\",\n                unit : \"number\"\n            }\n        },\n        {\n            dispName : \"Quantité totale\",\n            type : \"number\",\n            unit : \"integer\",\n            datasource : {\n                source : source,\n                name : \"qtyMachine\",\n                dispName : machineName + \" - Quantité totale\",\n                type : \"NUMBER\",\n                unit : \"number\"\n            }\n        },\n        {\n            dispName : \"Code d'erreur\",\n            type : \"number\",\n            unit : \"integer\",\n            datasource : {\n                source : source,\n                name : \"errorMachine\",\n                dispName : machineName + \" - Code d'erreur\",\n                type : \"NUMBER\",\n                unit : \"number\"\n            }\n        },\n        {\n            dispName : \"OF : numéro\",\n            type : \"string\",\n            unit : \"string\",\n            datasource : {\n                source : source,\n                name : \"id\",\n                dispName : machineName + \" - OF : numéro\",\n                type : \"STRING\",\n                unit : \"string\"\n            }\n        }, \n        {\n            dispName : \"OF : description\",\n            type : \"string\",\n            unit : \"string\",\n            datasource : {\n                source : source,\n                name : \"desc\",\n                dispName : machineName + \" - OF : description\",\n                type : \"STRING\",\n                unit : \"string\"\n            }\n        },\n        {\n            dispName : \"OF : référence du produit\",\n            type : \"string\",\n            unit : \"string\",\n            datasource : {\n                source : source,\n                name : \"prodId\",\n                dispName : machineName + \" - OF : référence du produit\",\n                type : \"STRING\",\n                unit : \"string\"\n            }\n        },\n        {\n            dispName : \"OF : quantité à produire\",\n            type : \"number\",\n            unit : \"integer\",\n            datasource : {\n                source : source,\n                name : \"qty\",\n                dispName : machineName + \" - OF : quantité à produire\",\n                type : \"NUMBER\",\n                unit : \"number\"\n            }\n        },\n        {\n            dispName : \"OF : quantité produite\",\n            type : \"number\",\n            unit :\"integer\",\n            datasource : {\n                source :  source,\n                name : \"qtyProduced\",\n                dispName : machineName + \" - OF : quantité produite\",\n                type : \"NUMBER\",\n                unit : \"number\"\n            }\n        },\n        {   dispName : \"OF : date/heure de début\",\n            type : \"timestamp\",\n            unit : \"timestamp_with_seconds\",\n            datasource : {\n                source :  source,\n                name : \"start\",\n                dispName : machineName + \" - OF : date/heure de début\",\n                type : \"NUMBER\",\n                unit : \"timestamp_with_seconds\"\n            }\n        },\n        {\n            dispName : \"OF : date/heure de fin\",\n            type : \"timestamp\",\n            unit : \"timestamp_with_seconds\",\n            datasource : {\n                source : source,\n                name : \"end\",\n                dispName : machineName + \" - OF : date/heure de fin\",\n                type : \"NUMBER\",\n                unit : \"timestamp_with_seconds\"\n            }\n        }\n        ]\n   }];\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 463.00000762939453,
+        "y": 253.0104274749756,
+        "wires": [
+            [
+                "e5081360.87b7d"
+            ]
+        ]
+    },
+    {
+        "id": "59c3bd51.29c524",
+        "type": "inject",
+        "z": "63721b7d.02c894",
+        "name": "on-demand : declare machine",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "3",
+        "x": 197,
+        "y": 253.01040649414062,
+        "wires": [
+            [
+                "e00d2be9.2c0ef8"
+            ]
+        ]
+    },
+    {
+        "id": "4af827f0.c965e8",
+        "type": "inject",
+        "z": "63721b7d.02c894",
+        "name": "start-up",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "x": 112.0173568725586,
+        "y": 58.010414123535156,
+        "wires": [
+            [
+                "901ea213.10b38"
+            ]
+        ]
+    },
+    {
+        "id": "d3b6a065.fb706",
+        "type": "sqlite",
+        "z": "63721b7d.02c894",
+        "mydb": "42f4a8be.6b8458",
+        "sqlquery": "fixed",
+        "sql": "CREATE TABLE IF NOT EXISTS FABRICATION_ORDER (\n    id          CHAR (50)  UNIQUE\n                           PRIMARY KEY\n                           NOT NULL,\n    [desc]      CHAR (200) UNIQUE,\n    prodId      CHAR (50)  REFERENCES PRODUCT (id) \n                           NOT NULL,\n    sched       INTEGER    DEFAULT now,\n    qty         INTEGER    NOT NULL,\n    start       INTEGER,\n    [end]       INTEGER    CHECK (\"end\" > \"start\"),\n    qtyProduced INTEGER    DEFAULT (0),\n    creation    INTEGER,\n    wiw         INTEGER    DEFAULT (0) \n                           NOT NULL\n);\n",
+        "name": "create table \"fabrication_order\"",
+        "x": 346.0175666809082,
+        "y": 107.64711952209473,
+        "wires": [
+            [
+                "7e72c89.9636e38"
+            ]
+        ]
+    },
+    {
+        "id": "901ea213.10b38",
+        "type": "sqlite",
+        "z": "63721b7d.02c894",
+        "mydb": "42f4a8be.6b8458",
+        "sqlquery": "fixed",
+        "sql": "CREATE TABLE IF NOT EXISTS PRODUCT (\n    id     CHAR (50)  PRIMARY KEY\n                      UNIQUE\n                      NOT NULL,\n    [desc] CHAR (200) UNIQUE,\n    wiw    INTEGER    NOT NULL\n                      DEFAULT (0) \n);",
+        "name": "create table \"product\"",
+        "x": 320.0134162902832,
+        "y": 57.15103721618652,
+        "wires": [
+            [
+                "d3b6a065.fb706"
+            ]
+        ]
+    },
+    {
+        "id": "7e72c89.9636e38",
+        "type": "sqlite",
+        "z": "63721b7d.02c894",
+        "mydb": "42f4a8be.6b8458",
+        "sqlquery": "fixed",
+        "sql": "SELECT COUNT(*) FROM PRODUCT;",
+        "name": "get products count",
+        "x": 333.0096740722656,
+        "y": 168.6432228088379,
+        "wires": [
+            [
+                "b9156523.4dc6c8"
+            ]
+        ]
+    },
+    {
+        "id": "5de5f25.495620c",
+        "type": "sqlite",
+        "z": "63721b7d.02c894",
+        "mydb": "42f4a8be.6b8458",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "write products",
+        "x": 965.5212707519531,
+        "y": 43.647193908691406,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2d48405f.b51d9",
+        "type": "function",
+        "z": "63721b7d.02c894",
+        "name": "create products msessages",
+        "func": "var msgs = [];\n\nfor ( var idx = 0; idx < 6; idx++ ) {\n    var prodId = \"P\" + (idx+1);\n    var prodName = \"Produit de démo-intégration \" + (idx+1);\n    var newMsg = {};\n    newMsg.topic = \"INSERT INTO PRODUCT(id,[desc],wiw) VALUES(\";\n    newMsg.topic += \"'\" + prodId + \"',\";\n    newMsg.topic += \"'\" + prodName + \"',\";\n    newMsg.topic += \"0);\";\n    msgs.push(newMsg);\n}\n\nreturn [msgs];",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 693.5211868286133,
+        "y": 36.424482345581055,
+        "wires": [
+            [
+                "5de5f25.495620c"
+            ]
+        ]
+    },
+    {
+        "id": "b9156523.4dc6c8",
+        "type": "function",
+        "z": "63721b7d.02c894",
+        "name": "check products count",
+        "func": "var count = msg.payload[0][Object.keys(msg.payload[0])];\nreturn ( count <= 0 ) ? msg : null;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 614.5213394165039,
+        "y": 170.42448234558105,
+        "wires": [
+            [
+                "2d48405f.b51d9",
+                "eb84a77f.909d38"
+            ]
+        ]
+    },
+    {
+        "id": "a12d006b.3fb12",
+        "type": "function",
+        "z": "63721b7d.02c894",
+        "name": "FO declaration",
+        "func": "if (Object.keys(msg.payload).length > 0) {\n    var fo ;\n    msg.wiwEntities = [];\n    for (var idxFO =0; idxFO<Object.keys(msg.payload).length;idxFO++){\n        fo = msg.payload[idxFO];\n        msg.wiwEntities.push({\n            dispName : fo.desc,\n            dispDescription : fo.id,\n            template : \"FABRICATION_ORDER\",\n            properties : [\n                {   \n                    dispName : \"Réference produit\",\n                    type : \"string\",\n                    unit : \"string\",\n                    value : fo.prodId\n                },\n                {\n                    dispName : \"Date planifiée\",\n                    type : \"date\",\n                    unit : \"datetime\",\n                    value : fo.sched\n                },\n                {\n                    dispName : \"Quantité à produire\",\n                    type : \"number\",\n                    unit :\"integer\",\n                    value : fo.qty\n                },\n                {\n                    dispName : \"Quantité produite\",\n                    type : \"number\",\n                    unit :\"integer\",\n                    datasource : {\n                        source :  fo.id,\n                        name : \"qtyProduced\",\n                        dispName : fo.desc + \" - Quantité produite\",\n                        type : \"NUMBER\",\n                        unit : \"number\"\n                    }\n                },\n                {\n                    dispName : \"Taux de rebut\",\n                    type : \"number\",\n                    unit :\"percent\",\n                    datasource : {\n                        source :  fo.id,\n                        name : \"rejectRate\",\n                        dispName : fo.desc + \" - Taux de rebut\",\n                        type : \"NUMBER\",\n                        unit : \"percent\"\n                    }\n                },\n                {\n                    dispName : \"Vitesse de production\",\n                    type : \"number\",\n                    unit : \"integer\",\n                    datasource : {\n                        source : fo.id,\n                        name : \"speedMachine\",\n                        dispName : fo.desc + \" - Vitesse machine\",\n                        type : \"NUMBER\",\n                        unit : \"number\"\n                    }\n                },\n                {   \n                    dispName : \"Date/heure de début\",\n                    type : \"timestamp\",\n                    unit : \"timestamp_with_seconds\",\n                    datasource : {\n                        source :  fo.id,\n                        name : \"start\",\n                        dispName : fo.desc + \" - Début\",\n                        type : \"NUMBER\",\n                        unit : \"timestamp_with_seconds\"\n                    }\n                },\n                {  \n                    dispName : \"Date/heure de fin\",\n                    type : \"timestamp\",\n                    unit : \"timestamp_with_seconds\",\n                    datasource : {\n                        source :  fo.id,\n                        name : \"end\",\n                        dispName : fo.desc + \" - Fin\",\n                        type : \"NUMBER\",\n                        unit : \"timestamp_with_seconds\"\n                    }\n                },\n                {\n                    dispName : \"Date/heure de création\",\n                    type : \"timestamp\",\n                    unit : \"timestamp_with_seconds\",\n                    value : fo.creation\n                }\n            ]\n       });\n      \n    }\n    msg.wiwRespContext = {table : \"FABRICATION_ORDER\"};\n    return msg;\n}\nelse \n    return null;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 761.0000190734863,
+        "y": 308.2326822280884,
+        "wires": [
+            [
+                "e5081360.87b7d"
+            ]
+        ]
+    },
+    {
+        "id": "94605719.1c1c68",
+        "type": "sqlite",
+        "z": "63721b7d.02c894",
+        "mydb": "42f4a8be.6b8458",
+        "sqlquery": "fixed",
+        "sql": "SELECT * FROM FABRICATION_ORDER WHERE wiw =0 ;",
+        "name": "get undeclared FO",
+        "x": 507.0000114440918,
+        "y": 312.2326822280884,
+        "wires": [
+            [
+                "a12d006b.3fb12",
+                "b9795d2b.58c59"
+            ]
+        ]
+    },
+    {
+        "id": "38972a1c.7c38a6",
+        "type": "inject",
+        "z": "63721b7d.02c894",
+        "name": "regular check of undeclared products/FO",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "2",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "x": 202,
+        "y": 375.23268604278564,
+        "wires": [
+            [
+                "94605719.1c1c68",
+                "a737ca17.da8af8"
+            ]
+        ]
+    },
+    {
+        "id": "a737ca17.da8af8",
+        "type": "sqlite",
+        "z": "63721b7d.02c894",
+        "mydb": "42f4a8be.6b8458",
+        "sqlquery": "fixed",
+        "sql": "SELECT * FROM PRODUCT WHERE wiw = 0;",
+        "name": "get undeclared products",
+        "x": 480.0000457763672,
+        "y": 490.2327079772949,
+        "wires": [
+            [
+                "34586d58.bd2cd2",
+                "a439ea31.ac9488"
+            ]
+        ]
+    },
+    {
+        "id": "34586d58.bd2cd2",
+        "type": "function",
+        "z": "63721b7d.02c894",
+        "name": "products declaration",
+        "func": "if (Object.keys(msg.payload).length > 0) {\n    var prod ;\n    msg.wiwEntities = [];\n    for (var idxProd =0; idxProd<Object.keys(msg.payload).length;idxProd++){\n        prod = msg.payload[idxProd];\n        msg.wiwEntities.push({\n            dispName : prod.desc,\n            dispDescription : prod.id,\n            template : \"PRODUCT\"\n           });\n    }\n    msg.wiwRespContext = {table : \"PRODUCT\"};\n    return msg;\n}\nelse \n    return null;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 858.0000228881836,
+        "y": 463.23268699645996,
+        "wires": [
+            [
+                "e5081360.87b7d"
+            ]
+        ]
+    },
+    {
+        "id": "88c9be37.c3d7d",
+        "type": "sqlite",
+        "z": "63721b7d.02c894",
+        "mydb": "42f4a8be.6b8458",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "update product/ FO status declaration to 1",
+        "x": 787.3985366821289,
+        "y": 421.81471729278564,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a439ea31.ac9488",
+        "type": "function",
+        "z": "63721b7d.02c894",
+        "name": "sql to update Products",
+        "func": "if (Object.keys(msg.payload).length > 0) {\n    var prod ;\n    msg.topic = \"UPDATE PRODUCT SET wiw = 1 WHERE \"; \n    for (var idxProd =0; idxProd<Object.keys(msg.payload).length;idxProd++){\n        prod = msg.payload[idxProd];\n        msg.topic += \"id = '\" + prod.id + \"'\";\n        if(idxProd<(Object.keys(msg.payload).length-1)) \n            msg.topic += \" OR \";\n}\nmsg.topic += \";\";\n} \nelse \n    return null\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 501.0195007324219,
+        "y": 443.2365927696228,
+        "wires": [
+            [
+                "88c9be37.c3d7d"
+            ]
+        ]
+    },
+    {
+        "id": "b9795d2b.58c59",
+        "type": "function",
+        "z": "63721b7d.02c894",
+        "name": "sql to update FO",
+        "func": "if (Object.keys(msg.payload).length > 0) {\n    var fo ;\n    msg.topic = \"UPDATE FABRICATION_ORDER SET wiw = 1 WHERE \"; \n    for (var idxFO =0; idxFO<Object.keys(msg.payload).length;idxFO++){\n        fo = msg.payload[idxFO];\n        msg.topic += \"id = '\" + fo.id + \"'\";\n        if(idxFO<(Object.keys(msg.payload).length-1)) \n            msg.topic += \" OR \";\n}\nmsg.topic += \";\";\n} \nelse \n    return null\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 523.0195465087891,
+        "y": 392.23659086227417,
+        "wires": [
+            [
+                "88c9be37.c3d7d"
+            ]
+        ]
+    },
+    {
+        "id": "eb84a77f.909d38",
+        "type": "function",
+        "z": "63721b7d.02c894",
+        "name": "create FO mesages",
+        "func": "var msgs = [];\n\nfor ( var idx = 0; idx < 12; idx++ ) {\n    var foId = Math.random().toString(36).substr(2, 16);\n    var foName = \"FO démo-intégration \" + (idx+1);\n    var newMsg = {};\n    newMsg.topic = \"INSERT INTO FABRICATION_ORDER(id,[desc],prodId, sched, qty, creation, wiw) VALUES(\";\n    newMsg.topic += \"'\" + foId + \"',\";\n    newMsg.topic += \"'\" + foName + \"',\";\n    newMsg.topic += \"'P\" + (idx%6 + 1) +  \"',\";\n    newMsg.topic += (new Date().getTime()) + Math.floor(Math.random() * Math.floor(10))*10000 + \",\";\n    newMsg.topic += Math.floor(Math.random() * Math.floor(20))*1000 + \",\" ;\n    newMsg.topic += (new Date().getTime())+\",\" ;\n    newMsg.topic += \"0);\";\n    msgs.push(newMsg);\n}\n\nreturn [msgs];",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 887.572940826416,
+        "y": 103.10766887664795,
+        "wires": [
+            [
+                "4cacd690.de4418"
+            ]
+        ]
+    },
+    {
+        "id": "4cacd690.de4418",
+        "type": "sqlite",
+        "z": "63721b7d.02c894",
+        "mydb": "42f4a8be.6b8458",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "write FOs",
+        "x": 870.5764389038086,
+        "y": 152.33685684204102,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5917194.69153e8",
+        "type": "wiwMqttConfig",
+        "z": "",
+        "name": "WhatIsWhat",
+        "chnlSystemOut": "demo-integ/sys_out",
+        "chnlDeclareOut": "demo-integ/decl_out",
+        "chnlValueOut": "demo-integ/val_out",
+        "qos": "1",
+        "reqResp": "10000",
+        "connected": "false",
+        "sendMsgsMaxCount": "100",
+        "sendMsgsKeepMostRecent": "true"
+    },
+    {
+        "id": "754b50b.ffc2fb",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "démo-intégration (dev)",
+        "broker": "100.64.0.204",
+        "port": "30883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "42f4a8be.6b8458",
+        "type": "sqlitedb",
+        "z": "",
+        "db": "node-red-contrib-wiw.demo.db",
+        "mode": "RWC"
+    }
+]
