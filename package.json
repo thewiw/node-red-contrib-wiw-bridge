@@ -1,5 +1,5 @@
 {
-  "name": "node-red-contrib-wiw-bridge",
+  "name": "@thewiw/node-red-contrib-wiw-bridge",
   "description": "Tools for communication with What Is What via Bridge Connector",
   "version": "1.0.0",
   "author": "The WiW",
