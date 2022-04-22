@@ -20,6 +20,11 @@ module.exports = function (RED) {
                 if (msgSource.twoWay === false || (msgSource.twoWay === undefined))
                     valTwoWay = false;
                 else valTwoWay = true;
+                if ((msgSource.displayName === undefined) || (msgSource.displayName === null)) {
+                    if ((msg.dispName !== undefined) && (msgSource.dispName !== null)) {
+                        msg.displayName = msg.dispName
+                    }
+                }
                 arrayOfSources[idxSource] = { id: msgSource.source.concat("#", msgSource.name), name: msgSource.displayName, type: msgSource.type, unit: msgSource.unit, twoWay: valTwoWay };
                 dataSave.datasourcesIds.push(msgSource.source.concat("#", msgSource.name));
             }
