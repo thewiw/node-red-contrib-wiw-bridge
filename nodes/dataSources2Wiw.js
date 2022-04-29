@@ -20,7 +20,7 @@ module.exports = function (RED) {
                 if (msgSource.twoWay === false || (msgSource.twoWay === undefined))
                     valTwoWay = false;
                 else valTwoWay = true;
-                arrayOfSources[idxSource] = { id: msgSource.source.concat("#", msgSource.name), name: msgSource.displayName, type: msgSource.type, unit: msgSource.unit, twoWay: valTwoWay };
+                arrayOfSources[idxSource] = { id: msgSource.source.concat("#", msgSource.name), name: ( msgSource.dispName ) ? msgSource.dispName : msgSource.displayName, type: msgSource.type, unit: msgSource.unit, twoWay: valTwoWay };
                 dataSave.datasourcesIds.push(msgSource.source.concat("#", msgSource.name));
             }
 
