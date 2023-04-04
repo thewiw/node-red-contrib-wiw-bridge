@@ -1,7 +1,7 @@
 {
   "name": "@thewiw/node-red-contrib-wiw-bridge",
   "description": "Tools for communication with What Is What via Bridge Connector",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "The WiW",
   "license": "Apache 2.0",
   "main": "index.js",
