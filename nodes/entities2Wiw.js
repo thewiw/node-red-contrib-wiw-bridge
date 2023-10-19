@@ -27,6 +27,7 @@ module.exports = function (RED) {
                         msgProperty = msgEntity.properties[idxProperty];
                         var entityProperty = { name: msgProperty.dispName, type: msgProperty.type, unit: msgProperty.unit };
 
+                        if (msgProperty.dataSource) {msgProperty.datasource=msgProperty.dataSource;}
                         if (msgProperty.datasource) {
                             var id = msgProperty.datasource.source.concat("#", msgProperty.datasource.name);
                             entityProperty.dsId = id;
