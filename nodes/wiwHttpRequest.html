@@ -1,0 +1,110 @@
+<script type="text/javascript">
+    RED.nodes.registerType('wiwHttpRequest', {
+        category: 'WIW Bridge',
+        color: '#E0E0E0',
+        defaults: {
+            name: {
+                value: "",
+                required: false,
+                validate: RED.validators.regex(/[a-zA-Z0-9]*/),
+            },
+            configuration: {
+                value: "",
+                type: "wiwHttpConfig",
+                required: true
+            },
+            method: {
+                value: "GET",
+                required: false
+            },
+            endpoint: {
+                value: null,
+                required: false
+            },
+            contenttype: {
+                value: null,
+                required: false
+            },
+            timeout: {
+                value: null,
+                required: false
+            }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "WIWicon.png",
+        align: "right",
+        label: function () {
+            return this.name || "wiwHttpRequest";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="wiwHttpRequest">
+    <style>
+        .categories {
+            border: 2px solid grey;
+            color: grey;
+            margin: 20px;
+            padding: 20px;
+        } 
+    </style>
+    <div class="categories">
+        <h2>Node </h2>
+        <div class="form-row">
+            <label for="node-input-name"><i class="icon-tag"></i> Name </label>
+            <input type="text" id="node-input-name" placeholder="Name">
+        </div>
+    </div>
+    <div class="categories">
+        <h2>Configuration node</h2>
+        <div class="form-row">
+            <label for="node-input-configuration"><i class="icon-wrench"></i> Configuration </label>
+            <input type="text" id="node-input-configuration">
+        </div>
+    </div>
+    <div class="categories">
+        <h2>Request</h2>
+        <div class="form-row">
+            <label for="node-input-method"><i class="icon-tasks"></i> Method</label>
+            <select type="text" id="node-input-method" style="width:70%;">
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+                <option value="DELETE">DELETE</option>
+                <option value="">msg.method</option>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-endpoint"><i class="icon-tasks"></i> Endpoint</label>
+            <input type="text" id="node-input-endpoint" placeholder="msg.endpoint">
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-contenttype"><i class="icon-tasks"></i> Content type</label>
+            <input type="text" id="node-input-contenttype" placeholder="msg.contentType">
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-timeout"><i class="icon-tasks"></i> Timeout</label>
+            <input type="number" id="node-input-timeout" placeholder="msg.timeout">
+        </div>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="httpRequest" data-lang="en-US">
+    <img src="/logoWIW.png" alt="logo What Is What">
+
+    <h2><b>wiwHttpRequest</b></h2>
+
+    <p>This node is used to send HTTP requests to What Is What.</p>
+   
+    <p>HTTP is NOT recommended to declare datasources and send values, please use MQTT nodes instead for this purpose.</p>
+
+    <h3>Http</h3>
+    <p><code>Method</code>is the request's method, if not provided then msg.method.</p>
+    <p><code>Endpoint</code> is the request's endpoint, if not provided then msg.endpoint.</p>
+    <p><code>Content type</code> is the request's content type, if not provided then msg.contentType, ultimately defaults to 'application/json'.</p>
+    <p><code>Timeout</code> is the request's timeout in ms, if not provided then msg.timeout OR wiwHttpConfig.timeout.</p>
+</script>

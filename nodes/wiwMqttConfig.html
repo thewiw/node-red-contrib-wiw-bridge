@@ -129,19 +129,19 @@
 </script>
 
 <script type="text/x-red" data-help-name="wiwMqttConfig" data-lang="en-US">
-    <img src="/logoWIW.png" alt="logo What IS What">
+    <img src="/logoWIW.png" alt="logo What Is What">
 
     <h2><b>wiwMqttConfig</b></h2>
 
-    <p>This configuration node is used to declare some parameters needed to setup communication with What Is What.</p>
+    <p>This configuration node is used to declare some parameters needed to setup communication with What Is What through MQTT.</p>
 
-    <p>This node is used by all communication nodes. It has to be common to all nodes communicating with the same What Is What.</p>
+    <p>This node is used by all MQTT communication nodes. It has to be common to all nodes communicating with the same What Is What.</p>
     
-    <p>If is, for example, in charge of message's identifier management.</p>
+    <p>It is, for example, in charge of message's identifier management.</p>
 
     <h3>Mqtt</h3>
     <p><code>Channel Declaration Out</code>is the topic used for items declaration (used by <code>entities2Wiw</code> or <code>dataSources2Wiw</code> for example). </p>
-    <p><codeChannel Value Out</code> is the topic used to send values (used by <code>valuesObjects2Wiw</code> for example). </p>
+    <p><code>Channel Value Out</code> is the topic used to send values (used by <code>valuesObjects2Wiw</code> for example). </p>
     <p><code>Channel System Out</code> is the topic used to set system's properties (like <code>system2Wiw</code> for example). </p>
     <p><code>Qos</code> is the qos used (unless for nodes modifying the system like <code>system2Wiw</code>) to send messages. </p>
 

@@ -1,7 +1,7 @@
 {
   "name": "@thewiw/node-red-contrib-wiw-bridge",
-  "description": "Tools for communication with What Is What via Bridge Connector",
-  "version": "1.0.3",
+  "description": "Communication with What Is What through Bridge Connector and/or direct HTTP",
+  "version": "1.2.0",
   "author": "The WiW",
   "license": "Apache 2.0",
   "main": "index.js",
@@ -9,13 +9,15 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "async-mutex": "^0.1.3"
+    "async-mutex": "^0.1.4",
+    "axios": "^1.6.2"
   },
   "devDependencies": {
     "node-red": "^0.20.7"
   },
   "keywords": [
     "wiw",
+    "thewiw",
     "the wiw",
     "what is what",
     "node-red"
@@ -30,7 +32,9 @@
       "wiw2ValuesObject": "nodes/wiw2ValuesObject.js",
       "wiwLogs": "nodes/wiwLogs.js",
       "wiwCheck": "nodes/wiwCheck.js",
-      "valuesObject2S7": "nodes/valuesObject2S7.js"
+      "valuesObject2S7": "nodes/valuesObject2S7.js",
+      "wiwHttpConfig": "nodes/wiwHttpConfig.js",
+      "wiwHttpRequest": "nodes/wiwHttpRequest.js"
     }
   },
   "standard": {

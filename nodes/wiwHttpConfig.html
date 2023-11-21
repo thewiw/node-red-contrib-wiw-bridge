@@ -1,0 +1,77 @@
+<script type="text/javascript">
+    RED.nodes.registerType('wiwHttpConfig', {
+        category: 'config',
+        defaults: {
+            name: { 
+                value: "", 
+                required: true
+            },
+            url: {
+                value: "",
+                required: true
+            },
+            timeout: { 
+                value: "",
+                required: false
+            },
+        },
+        credentials: {
+            token: {type: "password"}
+        },
+        label: function () {
+            return this.name || 'wiwHttpConfig';
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="wiwHttpConfig">
+    <style>
+        .categories {
+            border: 2px solid grey;
+            color: grey;
+            margin: 20px;
+            padding: 20px;
+        } 
+    </style>
+    <div class="categories">
+        <h2>Node </h2>
+        <div class="form-row">
+            <label for="node-config-input-name"><i class="icon-tag"></i> Name </label>
+            <input type="text" id="node-config-input-name">
+        </div>
+    </div>
+    <div class="categories">
+        <h2>Http</h2>
+        <div class="form-row">
+            <label for="node-config-input-url"><i class="icon-tasks"></i> Url</label>
+            <input type="text" id="node-config-input-url">
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-token"><i class="icon-tasks"></i> Token</label>
+            <input type="password" id="node-config-input-token">
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-timeout"><i class="icon-tasks"></i> Timeout</label>
+            <input type="number" id="node-config-input-timeout">
+        </div>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="wiwHttpConfig" data-lang="en-US">
+    <img src="/logoWIW.png" alt="logo What Is What">
+
+    <h2><b>wiwHttpConfig</b></h2>
+
+    <p>This configuration node is used to declare some parameters needed to setup communication with What Is What through HTTP.</p>
+
+    <p>This node is used by all HTTP communication nodes. It has to be common to all nodes communicating with the same What Is What.</p>
+
+    <p>HTTP is NOT recommended to declare datasources and send values, please use MQTT nodes instead for this purpose.</p>
+
+    <h3>Http</h3>
+    <p><code>Url</code>is the url of What Is What.</p>
+    <p><code>Token</code> is the access token (get it from What is What).</p>
+    <p><code>Timeout</code> is the queries default timeout in ms.</p>
+</script>
