@@ -4,8 +4,6 @@ module.exports = function (RED) {
     function wiwHttpRequestNode(config) {
         RED.nodes.createNode(this, config);
 
-        //console.log("wiwHttpRequestNode()", config);
-
         var node = this;
 
         this.name = config.name;

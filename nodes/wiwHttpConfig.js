@@ -11,8 +11,6 @@ module.exports = function (RED) {
 
         this.mutex = new asyncMutex.Mutex();
 
-        //console.log("wiwHttpConfigNode()", config);
-
         this.name = config.name;
         this.url = config.url;
         this.timeout = ( config.timeout && config.timeout > 0 ) ? config.timeout : 30000;
@@ -30,27 +28,72 @@ module.exports = function (RED) {
 
         var node = this;
 
-        node._onRequestResponse = function _onRequestResponse(msg, resp, loginIfNeeded, callback, callbackContext, callbackParam) {
-            if ( resp.status >= 200 && resp.status < 300 )
-                callback(msg, callbackContext, callbackParam, resp);
-            else if ( resp.status >= 400 && resp.status < 600 ) {
-                //console.log(resp);
-                if ( loginIfNeeded && ( resp.status == 403 || resp.status == 500 ) )
-                    node._login(msg, callbackContext, callbackParam);
-                else
-                    callback(msg, callbackContext, callbackParam, resp);
+        node._onQueryResp = function _onQueryResp(msg, context, param, resp) { // Called when query is done
+            if ( !context ) {
+                console.log("wiwHttp critical error : context does not exist");
+                return;
+            }
+
+            if ( msg && resp && resp.status >= 400 )
+                context.error ( "Failed query to endpoint '" + msg.endpoint + "' : " + resp.status );
+
+            if ( !node.bearerToken )
+                context.status ( { fill:"red", shape:"ring", text:"disconnected" } );
+            else
+                context.status ( { fill:"green", shape:"dot", text:"connected" } );
+
+            if ( !msg )
+                msg = { status:-1, endpoint:"", payload:null };
+
+            if ( resp ) {
+                msg.status = resp.status;
+                msg.payload = resp.data;
             }
             else {
-                resp.status = 0;
+                context.warn("wiwHttp warning for '" + msg.method + " " + msg.endpoint + "' : response does not exist");
+
+                msg.status = -1;
+                msg.payload = null;
+            }
+
+            context.send(msg);
+        }
+
+        node._onRequestResp = function _onRequestResp(msg, resp, loginIfNeeded, callback, callbackContext, callbackParam) {
+            if ( !resp || !callback ) {
+                node._onQueryResp(msg, callbackContext, callbackParam, resp);
+                return;
+            }
+
+            if ( resp.status >= 200 && resp.status <= 299 ) { // Success
                 callback(msg, callbackContext, callbackParam, resp);
+                return;
+            }
+            else if ( resp.status >= 400 && resp.status <= 599 ) { // Error
+                try {
+                    if ( loginIfNeeded && resp.data && resp.data.toLowerCase().includes("passed token is not") )
+                        node._login(msg, callbackContext, callbackParam);
+                    else
+                        node._onQueryResp(msg, callbackContext, callbackParam, resp);
+                }
+                catch ( err ) {
+                    node._onQueryResp(msg, callbackContext, callbackParam, resp);
+                }
+                return;
+            }
+            else { // What's this ?
+                node._onQueryResp(msg, callbackContext, callbackParam, resp);
+                return;
             }
         }
 
         node._request = function _request(msg, query, loginIfNeeded, callback, callbackContext, callbackParam) {
-            console.log('request 1');
-
-            if ( !query.method || !query.endpoint ) {
-                console.log('request error', query);
+            if ( !query || !query.method || !query.endpoint ) {
+                if ( callbackContext )
+                    callbackContext.error("wiwHttp error for '" + ( ( msg ) ? msg.method + " " + msg.endpoint : "" ) + "' : query is empty or is missing some attributes");
+                else
+                    console.log("wiwHttp error for '" + ( ( msg ) ? msg.method + " " + msg.endpoint : "" ) + "' : query is empty or is missing some attributes");
+                node._onQueryResp(msg, callbackContext, callbackParam, {status: -1});
                 return;
             }
 
@@ -64,24 +107,6 @@ module.exports = function (RED) {
             if ( node.bearerToken )
                 query.headers['Authorization'] = 'Bearer ' + node.bearerToken;
 
-            // Limit to 1 query at a time
-            /*
-            this.mutex.acquire(function (release) {
-                console.log("mutex : ", query);
-                axios(query)
-                    .then(function (response) {
-                        console.log(response);
-                        release();
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                        release();
-                    });
-            });
-            */
-
-            console.log('request 2');
-
             if ( query.contentType == 'multipart/form-data' && query.data ) {
                 const queryForm = new FormData();
                 
@@ -91,36 +116,39 @@ module.exports = function (RED) {
                 query.data = queryForm;
             }
 
-            console.log('request 3');
-
+            // Limit to 1 query at a time
+            /*
+            console.log(node.mutex);
+            node.mutex.acquire(function (release) {
+                console.log("mutex : ", query);
+                axios(query)
+                    .then(function (resp) {
+                        release();
+                        node._onRequestResp(msg, resp, loginIfNeeded, callback, callbackContext, callbackParam);
+                    })
+                    .catch(function (err) {
+                        release();
+                        node._onRequestResp(msg, err.response, loginIfNeeded, callback, callbackContext, callbackParam);
+                    });
+            });
+            */
             axios(query)
                 .then(function (resp) {
-                    node._onRequestResponse(msg, resp, loginIfNeeded, callback, callbackContext, callbackParam);
+                    node._onRequestResp(msg, resp, loginIfNeeded, callback, callbackContext, callbackParam);
                 })
                 .catch(function (err) {
-                    console.log("axios error", err);
+                    if ( err.response )
+                        node._onRequestResp(msg, err.response, loginIfNeeded, callback, callbackContext, callbackParam);
+                    else
+                        node._onRequestResp(msg, {status: -1}, loginIfNeeded, callback, callbackContext, callbackParam);
                 });
         }
 
-        node._onQueryResp = function _onQueryResp(msg, context, param, resp) { // Called when query is done
-            console.log('onQueryResp');
-
-            msg.status = resp.status;
-            msg.payload = resp.data;
-
-            console.log('done', msg);
-            context.send(msg);
-        }
-
         node._handleQuery = function _handleQuery(msg, callNode, query, loginIfNeeded) { // Call query
-            console.log('handleQuery');
-
-            node._request(msg, query, loginIfNeeded, node._onQueryResp, callNode, null);
+            node._request(msg, query, loginIfNeeded, node._onQueryResp, callNode, query);
         }
 
         node._onLoginResp = function _onLoginResp(msg, context, param, resp) { // Called when login is done
-            console.log('onLoginResp');
-
             if ( resp.status == 200 && resp.data && resp.data.token ) {
                 node.bearerToken = resp.data.token;
                 node.bearerTokenTstamp = Date.now();
@@ -134,19 +162,15 @@ module.exports = function (RED) {
         }
 
         node._login = function _login(msg, callNode, query) { // Call login
-            console.log('login');
-
             node.bearerToken = null;
             node.bearerTokenTstamp = null;
             node._request(msg, { method: 'POST', endpoint: 'api/v1/logintoken', data: { token: node.token } }, false, node._onLoginResp, callNode, query );
         }
 
         node.query = function query(msg, callNode, query) { // Do query, try to login if not done yet
-            console.log('query');
-
             if ( !node.bearerToken ) // Login not done yet
                 node._login(msg, callNode, query);
-            else // Login done
+            else // Login already done
                 node._handleQuery(msg, callNode, query, true);
         } 
     }
