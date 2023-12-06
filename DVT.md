@@ -57,7 +57,7 @@ During development this is needed each time a change is made in a .js file, not 
 The process is always the same :
 ```
 1) stop Node-RED
-2) Go to you .node-red directory and install node-red-contrib-bridge into node module (see above)
+2) Go to your .node-red directory and install node-red-contrib-bridge into node module (see above)
 3) restart Node-RED
 ```
 
@@ -99,3 +99,10 @@ To debug you can use :
 ```
 
 To apply changes in the source files, you have to reinstall node-red-contrib-wiw-bridge and re-start Node-RED (see "Installation" and "Usage" chapters above).
+
+
+## Package and Publish
+
+To npm : https://docs.npmjs.com/cli/v10/using-npm/developers
+
+To Node-RED library : https://nodered.org/docs/creating-nodes/packaging
